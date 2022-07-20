@@ -23,6 +23,9 @@
         },
     },
     "cSpell.words": [
+        "docstrings",
+        "isort",
+        "noqa",
         "Snallygasters"
     ]
 }
