@@ -1,0 +1,36 @@
+{
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.insertSpaces": true,
+    "editor.rulers": [
+        128
+    ],
+    "editor.tabSize": 4,
+    "files.autoGuessEncoding": true,
+    "files.encoding": "utf8",
+    "files.eol": "\r\n",
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+    },
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": [
+        "--target-version",
+        "py310"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.lintOnSave": true,
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "cSpell.words": [
+        "Snallygasters"
+    ]
+}
