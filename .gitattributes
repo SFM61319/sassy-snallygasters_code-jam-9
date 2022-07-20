@@ -1,0 +1,34 @@
+# Basic .gitattributes for a python repo.
+
+*        text=auto
+
+# Source files
+# ============
+*.pxd    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.py     text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.py3    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.pyw    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.pyx    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.pyz    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+*.pyi    text working-tree-encoding=UTF-8 eol=CRLF diff=python
+
+# Binary files
+# ============
+*.db     binary
+*.p      binary
+*.pkl    binary
+*.pickle binary
+*.pyc    binary export-ignore
+*.pyo    binary export-ignore
+*.pyd    binary
+
+# Jupyter notebook
+*.ipynb  text working-tree-encoding=UTF-8 eol=CRLF
+
+# Note: .db, .p, and .pkl files are associated
+# with the python modules ``pickle``, ``dbm.*``,
+# ``shelve``, ``marshal``, ``anydbm``, & ``bsddb``
+# (among others).
+
+[core]
+    autocrlf=false
