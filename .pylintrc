@@ -7,3 +7,4 @@ ignore-patterns=.git,
 
 [FORMAT]
 max-line-length=127
+good-names-rgxs=^[_a-zA-Z][_a-z0-9]?$
