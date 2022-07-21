@@ -14,13 +14,22 @@
     "files.trimTrailingWhitespace": true,
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
+    "python.linting.banditEnabled": false,
     "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": false,
+    "python.linting.prospectorEnabled": false,
+    "python.linting.pycodestyleEnabled": false,
+    "python.linting.pylamaEnabled": false,
+    "python.linting.pylintEnabled": false,
     "python.linting.lintOnSave": true,
+    "mypy.runUsingActiveInterpreter": true,
+    "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
-            "source.organizeImports": true
+            "source.organizeImports": true,
+            "source.fixAll": true
         },
     },
     "cSpell.words": [
