@@ -7,13 +7,12 @@
         "GitHub.vscode-pull-request-github",
         "matangover.mypy",
         "ms-python.black-formatter",
-        "ms-python.gather",
         "ms-python.isort",
+        "ms-python.pylint",
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-vscode.vscode-github-issue-notebooks",
         "streetsidesoftware.code-spell-checker",
-        "trunk.io",
         "VisualStudioExptTeam.vscodeintellicode"
     ],
     "unwantedRecommendations": []
