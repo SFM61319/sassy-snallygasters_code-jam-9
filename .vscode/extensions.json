@@ -5,6 +5,7 @@
         "eamodio.gitlens",
         "GitHub.remotehub",
         "GitHub.vscode-pull-request-github",
+        "matangover.mypy",
         "ms-python.black-formatter",
         "ms-python.gather",
         "ms-python.isort",
