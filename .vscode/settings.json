@@ -34,9 +34,13 @@
     },
     "cSpell.words": [
         "docstrings",
+        "docparams",
         "isort",
         "mypy",
         "noqa",
+        "pylint",
+        "pylintrc",
+        "rcfile",
         "Snallygasters"
     ]
 }
