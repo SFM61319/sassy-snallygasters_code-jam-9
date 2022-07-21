@@ -25,6 +25,7 @@
     "cSpell.words": [
         "docstrings",
         "isort",
+        "mypy",
         "noqa",
         "Snallygasters"
     ]
