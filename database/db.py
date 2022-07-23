@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import asyncpg
 
@@ -50,7 +50,7 @@ class PlayerDB(DatabaseModel):  # subclass of DatabaseModel for player data
         record = await self.exec_fetchone("SELECT * FROM players WHERE name = $1", (user_name,))
         return PlayerRecord(*record) if record else None
 
-    async def create_player(self, user_name: str) -> PlayerRecord | bool:
+    async def create_player(self, user_name: str) -> Union[PlayerRecord, bool] | bool:
         """
         Create a new player.
         :param user_name:
