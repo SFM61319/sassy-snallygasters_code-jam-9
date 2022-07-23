@@ -1,0 +1,10 @@
+[MASTER]
+ignore-patterns=.git,
+                .venv,
+                __pycache__,
+                build,
+                dist
+
+[FORMAT]
+max-line-length=127
+good-names-rgxs=^[_a-zA-Z][_a-z0-9]?$
