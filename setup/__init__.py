@@ -1,1 +1,1 @@
-from setup.setup import *
+from .setup import Setup

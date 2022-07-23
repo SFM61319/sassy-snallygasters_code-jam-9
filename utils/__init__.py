@@ -1,1 +1,1 @@
-from utils.data import *
+from .data import PlayerRecord

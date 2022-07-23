@@ -3,7 +3,7 @@ import os
 
 import asyncpg
 
-from database.db import PlayerDB
+from database import PlayerDB
 
 
 class Setup:  # setup class
