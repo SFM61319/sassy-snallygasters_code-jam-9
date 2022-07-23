@@ -1,10 +1,11 @@
-import asyncpg
 import typing as t
+
+import asyncpg
 
 __all__: t.Tuple[str, ...] = ("DatabaseModel",)
 
 
-class DatabaseModel:  #model commands class for database
+class DatabaseModel:  # model commands class for database
     """
     General methods for database.
     """

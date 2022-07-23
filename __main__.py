@@ -1,6 +1,5 @@
-#import asyncio
-from setup import Setup  #importing the class from setup.setup to setup all connections
-
+# import asyncio
+from setup import Setup
 
 # async def test(setup): #creating a function to test the setup
 #     await setup.setup()
@@ -19,5 +18,5 @@ from setup import Setup  #importing the class from setup.setup to setup all conn
 #     print('sucess')
 
 if __name__ == "__main__":
-    bot = Setup()  #creating a bot object
-    #asyncio.run(test(bot))  #calling the test function
+    bot = Setup()  # creating a bot object
+    # asyncio.run(test(bot))  #calling the test function

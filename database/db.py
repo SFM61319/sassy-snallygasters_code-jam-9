@@ -1,14 +1,17 @@
 from __future__ import annotations
+
+from typing import List, Optional, Tuple
+
 import asyncpg
-from typing import List, Tuple, Optional
-from .postgres import DatabaseModel
+
 from utils import PlayerRecord
 
+from .postgres import DatabaseModel
 
 __all__: Tuple[str, ...] = ("PlayerDB",)
 
 
-class PlayerDB(DatabaseModel):  #subclass of DatabaseModel for player data
+class PlayerDB(DatabaseModel):  # subclass of DatabaseModel for player data
     """
     all abstract methods for using player database.
     """
@@ -22,12 +25,14 @@ class PlayerDB(DatabaseModel):  #subclass of DatabaseModel for player data
         :return:
         """
         self.pool = pool
-        await self.exec_write_query("""CREATE TABLE IF NOT EXISTS players(
+        await self.exec_write_query(
+            """CREATE TABLE IF NOT EXISTS players(
                                        name TEXT PRIMARY KEY,
                                        wins BIGINT,
                                        losses BIGINT,
                                        ties BIGINT,
-                                       history TEXT[])""")
+                                       history TEXT[])"""
+        )
 
     async def drop_table(self) -> None:
         """
@@ -54,7 +59,13 @@ class PlayerDB(DatabaseModel):  #subclass of DatabaseModel for player data
         player = await self.find_player(user_name)
         if player is not None:
             return False
-        await self.exec_write_query("INSERT INTO players VALUES ($1, 0, 0, 0, $2)", (user_name, [],))
+        await self.exec_write_query(
+            "INSERT INTO players VALUES ($1, 0, 0, 0, $2)",
+            (
+                user_name,
+                [],
+            ),
+        )
         return await self.find_player(user_name)
 
     async def remove_player(self, user_name: str) -> bool:
