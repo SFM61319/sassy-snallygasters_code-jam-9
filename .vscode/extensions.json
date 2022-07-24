@@ -12,6 +12,7 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-vscode.vscode-github-issue-notebooks",
+        "njpwerner.autodocstring",
         "streetsidesoftware.code-spell-checker",
         "VisualStudioExptTeam.vscodeintellicode"
     ],
