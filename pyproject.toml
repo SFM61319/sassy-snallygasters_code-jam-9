@@ -8,6 +8,7 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "3.10.*"
 asyncpg = "~0.26.0"
+pygame = "~2.1.2"
 
 [tool.poetry.dev-dependencies]
 black = "~22.6.0"
