@@ -32,6 +32,10 @@
             "source.fixAll": true
         },
     },
+    "autoDocstring.docstringFormat": "sphinx",
+    "autoDocstring.guessTypes": true,
+    "autoDocstring.includeExtendedSummary": true,
+    "autoDocstring.includeName": true,
     "cSpell.words": [
         "docstrings",
         "docparams",
