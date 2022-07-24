@@ -4,7 +4,7 @@ from typing import List, Optional, Tuple
 
 import asyncpg
 
-from utils import PlayerRecord
+from wild_chess.utils import PlayerRecord
 
 from .postgres import DatabaseModel
 

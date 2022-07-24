@@ -1,7 +1,7 @@
 # import asyncio
-from setup import Setup
+from wild_chess.setup import Setup
 
-# async def test(setup): #creating a function to test the setup
+# async def test(setup): # creating a function to test the setup
 #     await setup.setup()
 #     await setup.db.create_player("test")
 #     print(await setup.db.find_player("test"))
@@ -19,4 +19,4 @@ from setup import Setup
 
 if __name__ == "__main__":
     bot = Setup()  # creating a bot object
-    # asyncio.run(test(bot))  #calling the test function
+    # asyncio.run(test(bot))  # calling the test function

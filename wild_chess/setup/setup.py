@@ -3,7 +3,7 @@ import os
 
 import asyncpg
 
-from database import PlayerDB
+from wild_chess.database import PlayerDB
 
 
 class Setup:  # setup class
