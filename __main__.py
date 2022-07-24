@@ -1,7 +1,7 @@
 # import asyncio
 from wild_chess.setup import Setup
 
-# async def test(setup): # creating a function to test the setup
+# async def test(setup) -> None:  # creating a function to test the setup
 #     await setup.setup()
 #     await setup.db.create_player("test")
 #     print(await setup.db.find_player("test"))
@@ -11,6 +11,8 @@ from wild_chess.setup import Setup
 #     await setup.db.update_player_loss("test")
 #     print(await setup.db.find_player("test"))
 #     await setup.db.update_player_tie("test")
+#     print(await setup.db.find_player("test"))
+#     await setup.db.update_player_history("test", "user", ["00", "01", "02"], "win")
 #     print(await setup.db.find_player("test"))
 #     await setup.db.remove_player("test")
 #     print(await setup.db.all_players())

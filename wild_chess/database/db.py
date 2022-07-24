@@ -129,8 +129,8 @@ class PlayerDB(DatabaseModel):  # subclass of DatabaseModel for player data
         if player is None:
             return False
         history = player.history
-        container = f"{'opponent': {player_name}, 'moves': {moves}, 'status': {status}}"
-        history.append(container)
+        container = {"opponent": player_name, "moves": moves, "status": status}
+        history.append(str(container))
         await self.exec_write_query("UPDATE players SET history = $1 WHERE name = $2", (history, user_name))
         return True
 
