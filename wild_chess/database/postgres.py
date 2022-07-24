@@ -24,7 +24,7 @@ class DatabaseModel:  # model commands class for database
             return
         await self.pool.execute(query)
 
-    async def exec_fetchone(self, query: str, data: t.Tuple[t.Any, ...] | None = None) -> list:
+    async def exec_fetchone(self, query: str, data: t.Tuple[t.Any, ...] | None = None) -> asyncpg.Record:
         """
         Execute a fetchone query.
         :param query:
@@ -33,7 +33,7 @@ class DatabaseModel:  # model commands class for database
         """
         return await self.pool.fetchrow(query, *data)
 
-    async def exec_fetchall(self, query: str) -> list:
+    async def exec_fetchall(self, query: str) -> t.List[asyncpg.Record]:
         """
         Execute a fetchall query.
         :param query:

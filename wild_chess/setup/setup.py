@@ -24,7 +24,7 @@ class Setup:  # setup class
             user=os.getenv("PGUSER"),
             password=os.getenv("PGPASSWORD"),
             host=os.getenv("PGHOST"),
-            port=int(os.getenv("PGPORT")),
+            port=os.getenv("PGPORT"),
             database=os.getenv("PGDATABASE"),
             ssl="require",
             loop=asyncio.get_event_loop(),
