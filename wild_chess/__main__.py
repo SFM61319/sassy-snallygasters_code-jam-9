@@ -1,3 +1,6 @@
+"""Main file."""
+
+
 # import asyncio
 from wild_chess.setup import Setup
 
