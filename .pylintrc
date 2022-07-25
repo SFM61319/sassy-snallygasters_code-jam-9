@@ -4,6 +4,7 @@ ignore-patterns=.git,
                 __pycache__,
                 build,
                 dist
+extension-pkg-allow-list=pygame
 
 [FORMAT]
 max-line-length=127
