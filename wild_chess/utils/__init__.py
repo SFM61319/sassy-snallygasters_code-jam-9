@@ -1,1 +1,1 @@
-from .data import PlayerAttributes, PlayerRecord
+"""wild_chess/utils"""
