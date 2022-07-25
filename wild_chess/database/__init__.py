@@ -1,1 +1,1 @@
-from .db import PlayerDB
+"""wild_chess/database"""
