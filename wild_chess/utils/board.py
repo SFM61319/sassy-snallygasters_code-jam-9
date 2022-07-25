@@ -1,8 +1,7 @@
 """A piece class, the parent of all pieces"""
 from ..logic.pieces import *
 from ..utils.data import PlayerAttributes
-from typing import List, Tuple, Optional
-import random
+from typing import List, Optional
 
 # pylint: disable=R0913
 # pylint: disable=R0903
