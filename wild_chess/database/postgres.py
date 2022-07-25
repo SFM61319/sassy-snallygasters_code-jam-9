@@ -24,7 +24,7 @@ class DatabaseModel:  # model commands class for database
             return
         await self.pool.execute(query)
 
-    async def exec_fetchone(self, query: str, data: t.Tuple[t.Any, ...] | None = None) -> asyncpg.Record:
+    async def exec_fetchone(self, query: str, data: t.Tuple[t.Any, ...] | None = None) -> t.Optional[asyncpg.Record]:
         """
         Execute a fetchone query.
         :param query:

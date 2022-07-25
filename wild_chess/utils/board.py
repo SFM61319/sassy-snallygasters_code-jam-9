@@ -1,7 +1,8 @@
 """A piece class, the parent of all pieces"""
-from ..logic.pieces import *
-from ..utils.data import PlayerAttributes
 from typing import List, Optional
+
+from ..logic import Bishop, ChessPiece, King, Knight, Pawn, Queen, Rook
+from ..utils import PlayerAttributes
 
 # pylint: disable=R0913
 # pylint: disable=R0903
@@ -12,7 +13,7 @@ from typing import List, Optional
 class Board:
     board: List[List[Optional[ChessPiece]]]
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.board = [[None for _ in range(8)] for _ in range(8)]
 
     def generate_pieces(self, player1: PlayerAttributes, player2: PlayerAttributes) -> None:

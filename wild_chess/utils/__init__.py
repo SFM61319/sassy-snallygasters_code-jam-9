@@ -1,1 +1,1 @@
-from .data import PlayerRecord
+from .data import PlayerAttributes, PlayerRecord

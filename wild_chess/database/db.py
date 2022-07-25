@@ -4,8 +4,7 @@ from typing import List, Optional, Tuple
 
 import asyncpg
 
-from wild_chess.utils import PlayerRecord
-
+from ..utils import PlayerRecord
 from .postgres import DatabaseModel
 
 __all__: Tuple[str, ...] = ("PlayerDB",)
