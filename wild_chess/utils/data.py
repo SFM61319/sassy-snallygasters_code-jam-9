@@ -16,3 +16,13 @@ class PlayerRecord:  # model for player data
     losses: int
     ties: int
     history: List[str | None]
+
+
+@dataclass
+class PlayerAttributes:
+    """
+    PlayerAttributes is a dataclass that represents a player's attributes.
+    """
+
+    name: str
+    color: str
