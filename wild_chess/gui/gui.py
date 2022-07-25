@@ -1,6 +1,7 @@
-"""wild_chess/main.py"""
+"""Pygame GUI"""
 # pylint: disable=E1101
 import pygame
+import pygame.freetype
 
 # import board_backend
 
@@ -73,15 +74,26 @@ def draw_board(screen: pygame.Surface) -> None:  # Need to add a parameter for g
             )
 
 
+def draw_text(screen: pygame.Surface) -> None:
+    """Draw text in window"""
+    font = pygame.font.SysFont("Times New Roman", 30)
+    player_1_text = "Player 1"
+    player_2_text = "Player 2"
+    versus_text = f"{player_1_text} VS {player_2_text}"
+    versus_text_pos = (BOARD_DFE + (BOARD_WIDTH // 2), (BOARD_DFE * 2) + BOARD_HEIGHT)
+    surface_versus_text = font.render(versus_text, True, (0, 0, 0))
+    text_rect = surface_versus_text.get_rect(center=versus_text_pos)
+    screen.blit(surface_versus_text, text_rect)
+
+
 def main() -> None:
     """Main Function"""
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
     pygame.display.set_caption("Wild Chess")
     clock = pygame.time.Clock()
-
     # game_state = board_backend.game_state() #load game state
-    load_images()  # load chess pieces
+    # load_images()  # load images of chess pieces only once
     running = True
     while running:
         for event in pygame.event.get():
@@ -89,6 +101,7 @@ def main() -> None:
                 running = False
         screen.fill("#FFFFFF")  # Filling each frame since resizing causes issues
         draw_board(screen)
+        draw_text(screen)
         clock.tick(FPS)
         pygame.display.flip()
 
