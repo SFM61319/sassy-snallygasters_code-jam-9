@@ -38,15 +38,24 @@
     "autoDocstring.includeName": true,
     "cSpell.words": [
         "asyncpg",
-        "docstrings",
+        "blit",
         "docparams",
+        "docstrings",
+        "fetchrow",
+        "freetype",
         "isort",
         "mypy",
         "noqa",
+        "PGDATABASE",
+        "PGHOST",
+        "PGPORT",
+        "PGUSER",
+        "pygame",
         "pylint",
         "pylintrc",
         "rcfile",
         "rtype",
+        "Sharicks's",
         "Snallygasters"
     ]
 }
