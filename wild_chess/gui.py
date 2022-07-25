@@ -4,8 +4,8 @@ import pygame
 
 # import board_backend
 
-# Referenced from Eddie Sharicks's 'Chess Engine in Python series'
-# https://youtube.com/playlist?list=PLBwF487qi8MGU81nDGaeNE1EnNEPYWKY
+# Referenced from Eddie Sharicks's 'Chess Engine in Python' series
+# https://youtube.com/playlist?list=PLBwF487qi8MGU81nDGaeNE1EnNEPYWKY_
 
 WINDOW_WIDTH = 720  # Horizontal Resolution of window
 WINDOW_HEIGHT = 720  # Vertical Resolution of window
@@ -22,9 +22,16 @@ IMAGES = {}  # Dictionary storing the images of pieces
 
 def load_images() -> None:
     """Funtion to load images of chess pieces into dictionary"""
-    pieces = ["wk", "wq", "wr", "wb", "wn", "wp", "bk", "bq", "br", "bb", "bn", "bp"]
+    pieces = []
+    piece_colors = ["black", "white"]
+    piece_types = ["pawn", "rook", "knight", "bishop", "queen", "king"]
+    for piece_color in piece_colors:
+        for piece_type in piece_types:
+            pieces.append(f"{piece_type}.{piece_color}")
     for piece in pieces:
-        IMAGES[piece] = pygame.transform.scale(pygame.image.load("./images/" + piece + ".png"), (SQUARE_SIZE, SQUARE_SIZE))
+        IMAGES[piece] = pygame.transform.scale(
+            pygame.image.load(rf"assets/img/chess_pieces/{piece}.png"), (SQUARE_SIZE, SQUARE_SIZE)
+        )
 
 
 def get_screen_res() -> tuple:
@@ -74,7 +81,7 @@ def main() -> None:
     clock = pygame.time.Clock()
 
     # game_state = board_backend.game_state() #load game state
-    # load_images() #load chess pieces
+    load_images()  # load chess pieces
     running = True
     while running:
         for event in pygame.event.get():
