@@ -1,6 +1,7 @@
 """A piece class, the parent of all pieces"""
 
 
+import random
 import typing
 
 from wild_chess.logic import pieces
@@ -34,26 +35,26 @@ class Board:
         :param player2:
         :return:
         """
+        all_special_pieces: list[type[pieces.ChessPiece]] = [
+            pieces.Rook,
+            pieces.Knight,
+            pieces.Bishop,
+            pieces.Queen,
+            pieces.King,
+            pieces.Bishop,
+            pieces.Knight,
+            pieces.Rook,
+        ]
+        random.shuffle(all_special_pieces)
+
         for i in range(8):
             self.board[1][i] = pieces.Pawn((1, i), player1.name, player1.color)
             self.board[6][i] = pieces.Pawn((6, i), player2.name, player2.color)
 
-        self.board[0][0] = pieces.Rook((0, 0), player1.name, player1.color)
-        self.board[0][7] = pieces.Rook((0, 7), player1.name, player1.color)
-        self.board[7][0] = pieces.Rook((7, 0), player2.name, player2.color)
-        self.board[7][7] = pieces.Rook((7, 7), player2.name, player2.color)
-        self.board[0][1] = pieces.Knight((0, 1), player1.name, player1.color)
-        self.board[0][6] = pieces.Knight((0, 6), player1.name, player1.color)
-        self.board[7][1] = pieces.Knight((7, 1), player2.name, player2.color)
-        self.board[7][6] = pieces.Knight((7, 6), player2.name, player2.color)
-        self.board[0][2] = pieces.Bishop((0, 2), player1.name, player1.color)
-        self.board[0][5] = pieces.Bishop((0, 5), player1.name, player1.color)
-        self.board[7][2] = pieces.Bishop((7, 2), player2.name, player2.color)
-        self.board[7][5] = pieces.Bishop((7, 5), player2.name, player2.color)
-        self.board[0][3] = pieces.Queen((0, 3), player1.name, player1.color)
-        self.board[7][3] = pieces.Queen((7, 3), player2.name, player2.color)
-        self.board[0][4] = pieces.King((0, 4), player1.name, player1.color)
-        self.board[7][4] = pieces.King((7, 4), player2.name, player2.color)
+            random_piece = all_special_pieces.pop()
+
+            self.board[0][i] = random_piece((0, i), player1.name, player1.color)
+            self.board[7][i] = random_piece((7, i), player2.name, player2.color)
 
     def check_check(self, player: data.PlayerAttributes, board: typing.List[typing.List[pieces.ChessPiece]] = None) -> bool:
         """
