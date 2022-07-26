@@ -124,6 +124,30 @@ class Board:
                     return True
         return False
 
+    def check_king_mouse_slip(
+        self,
+        player: data.PlayerAttributes,
+        old: typing.Tuple[int, int],
+    ) -> bool:
+        """The king can take his own pieces"""
+        x = self.board[old[0] + 1][old[1]]
+        if isinstance(x, pieces.Pawn) and x.color == player.color:
+            return True
+
+    def check_knight_mouse_slip(self, player: data.PlayerAttributes, old: typing.Tuple[int, int]) -> bool:
+        """The knight moves straight up when pawn, instead of how it originally moves"""
+        x = self.board[old[0] + 1][old[1] + 1]
+        if isinstance(x, pieces.Pawn) and x.color != player.color:
+            return True
+
+    def check_queen_mouse_slip(self, player: data.PlayerAttributes, old: typing.Tuple[int, int]) -> bool:
+        """The queen moves like a knight"""
+        x = self.board[old[0] - 1][old[1] + 1]
+        y = self.board[old[0] + 1][old[1] - 1]
+
+        if isinstance(x, pieces.Pawn) or isinstance(y, pieces.Pawn) and x.color != player.color:
+            return True
+
 
 # TODO: Refactor this class
 class Team(Board):
