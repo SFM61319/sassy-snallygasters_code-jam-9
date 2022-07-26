@@ -1,153 +1,150 @@
 """Pygame GUI"""
 
 
+import pathlib
+import typing
+
 import pygame
 import pygame.freetype
 
 # import board_backend
 
 
-# Referenced from Eddie Sharicks's 'Chess Engine in Python' series
-# https://youtube.com/playlist?list=PLBwF487qi8MGU81nDGaeNE1EnNEPYWKY_
+class Game:
+    """
+    Game UI
 
-WINDOW_WIDTH = pygame.display.Info().current_w  # Horizontal Resolution of window
-WINDOW_HEIGHT = pygame.display.Info().current_h * 0.95  # Vertical Resolution of window
-BOARD_WIDTH = BOARD_HEIGHT = WINDOW_HEIGHT * 0.85  # Resolution of only the board i.e. play area
-BOARD_DFE = (
-    WINDOW_HEIGHT
-    # Board Distance From Edge - Distance of the top left and top right corner of the board from the corner of the window
-    * 0.05
-)
-DIMENSION = 8  # Dimensions of Chess Board (8x8)
-SQUARE_SIZE = BOARD_HEIGHT // DIMENSION  # Per Square size
-FPS = 15  # FPS For animations
-BORDER_OFFSET_L = BORDER_OFFSET_R = 2  # Width of border on the perimeter of the chess board
-IMAGES: dict[str, str] = {}  # Dictionary storing the images of pieces
+    Usage:
+        game = Game()
+        game.init()
+    """
 
+    SQUARES: typing.Literal[8] = 8
+    FPS: typing.Literal[15] = 15
+    IMAGE_ASSETS_PATH: pathlib.Path = pathlib.Path("assets/img/chess_pieces")
 
-def load_images() -> None:
-    """Function to load images of chess pieces into dictionary"""
-    pieces = []
-    piece_colors = ("black", "white")
-    piece_types = ("pawn", "rook", "knight", "bishop", "queen", "king")
+    screen: pygame.surface.Surface
+    window_width: int
+    window_height: int
+    board_width: int
+    board_height: int
+    board_dfe: int
+    square_size: int
+    border_offset: tuple[int, int, int, int]  # left, top, right, bottom
+    images: dict[str, pathlib.Path]
 
-    for piece_color in piece_colors:
+    def __init__(self) -> None:
+        screen_res = self.get_screen_res()
+
+        self.window_width = screen_res[0]
+        self.window_height = round(screen_res[1] * 0.95)
+
+        self.board_width = self.board_height = round(self.window_height * 0.85)
+        self.board_dfe = round(self.window_height * 0.05)
+        self.square_size = self.board_height // self.SQUARES
+        self.border_offset = (2, 0, 2, 0)
+        self.images = {}
+
+    def __load_images(self) -> None:
+        """Function to load images of chess pieces into dictionary"""
+        piece_types = ("pawn", "rook", "knight", "bishop", "queen", "king")
+
         for piece_type in piece_types:
-            pieces.append(f"{piece_type}.{piece_color}")
+            self.images[f"{piece_type}.white"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.white.png"
+            self.images[f"{piece_type}.black"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.black.png"
 
-    for piece in pieces:
-        IMAGES[piece] = f"assets/img/chess_pieces/{piece}.png"
+    def __draw_board(self) -> None:
+        """Draws the UI."""
+        board_color = (255, 0, 0)
+        offset_l = self.border_offset[0]
+        offset_r = self.border_offset[2] + offset_l
 
+        pygame.draw.rect(
+            self.screen,
+            board_color,
+            pygame.Rect(
+                self.board_dfe + self.window_width / 2 - self.window_height / 2 - offset_l,
+                self.board_dfe - offset_l,
+                (self.square_size * self.SQUARES) + offset_r,
+                (self.square_size * self.SQUARES) + offset_r,
+            ),
+            offset_l,
+        )
 
-def get_screen_res() -> tuple[int, int]:
-    """Function to get the user's screen resolution"""
-    display_info = pygame.display.Info()
-    return (display_info.current_w, display_info.current_h)
+        # Draw squares inside board
+        square_colors = ["#DFDFDF", "#202020"]  # White, Black
 
+        for row in range(self.SQUARES):
+            for column in range(self.SQUARES):
+                current_color = square_colors[(row + column) % 2]
+                pygame.draw.rect(
+                    self.screen,
+                    current_color,
+                    pygame.Rect(
+                        self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size),
+                        self.board_dfe + (row * self.square_size),
+                        self.square_size,
+                        self.square_size,
+                    ),
+                )
 
-# TODO: Need to add a parameter for game_state object here
-def draw_board(screen: pygame.Surface) -> None:
-    """Function to draw playable board inside the pygame window"""
-    # Getting window width and height again due to possible screen resize
-    window_width = pygame.display.Info().current_w
-    window_height = pygame.display.Info().current_h * 0.95
-    board_height = window_height * 0.85  # Resolution of only the board i.e. play area
-    board_dfe = (
-        window_height
-        # Board Distance From Edge - Distance of the top left and top right corner of the board from the corner of the window
-        * 0.05
-    )
-    square_size = board_height // 8
-    # Main play area border
-    board_color = (255, 0, 0)
-    offset_l = BORDER_OFFSET_L
-    offset_r = BORDER_OFFSET_R + BORDER_OFFSET_L
+    def __draw_text(self) -> None:
+        """Draw text in window"""
+        font = pygame.font.SysFont("Times New Roman", 30)
 
-    pygame.draw.rect(
-        screen,
-        board_color,
-        pygame.Rect(
-            board_dfe + window_width / 2 - window_height / 2 - offset_l,
-            board_dfe - offset_l,
-            (square_size * DIMENSION) + offset_r,
-            (square_size * DIMENSION) + offset_r,
-        ),
-        offset_l,
-    )
+        # TODO: Use player usernames instead
+        player_1_text = "Player 1"
+        player_2_text = "Player 2"
 
-    # Draw squares inside board
-    square_colors = ["#DFDFDF", "#202020"]  # White, Black
+        versus_text = f"{player_1_text} VS {player_2_text}"
+        versus_text_pos = (self.board_dfe + (self.board_width // 2), (self.board_dfe * 2) + self.board_height)
 
-    for row in range(DIMENSION):
-        for column in range(DIMENSION):
-            current_color = square_colors[(row + column) % 2]
-            pygame.draw.rect(
-                screen,
-                current_color,
-                pygame.Rect(
-                    board_dfe + window_width / 2 - window_height / 2 + (column * square_size),
-                    board_dfe + (row * square_size),
-                    square_size,
-                    square_size,
-                ),
-            )
+        surface_versus_text = font.render(versus_text, True, (0, 0, 0))
+        text_rect = surface_versus_text.get_rect(center=versus_text_pos)
 
+        self.screen.blit(surface_versus_text, text_rect)
 
-def draw_text(screen: pygame.Surface) -> None:
-    """Draw text in window"""
-    font = pygame.font.SysFont("Times New Roman", 30)
+    def __update(self) -> None:
+        """Update screen."""
+        self.__draw_board()
+        self.__load_images()
 
-    # TODO: Use player usernames instead
-    player_1_text = "Player 1"
-    player_2_text = "Player 2"
+    def init(self) -> None:
+        """Starts the GUI."""
+        pygame.init()
+        pygame.display.init()
+        pygame.display.set_caption("Wild Chess")
 
-    versus_text = f"{player_1_text} VS {player_2_text}"
-    versus_text_pos = (BOARD_DFE + (BOARD_WIDTH // 2), (BOARD_DFE * 2) + BOARD_HEIGHT)
+        self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
+        clock = pygame.time.Clock()
 
-    surface_versus_text = font.render(versus_text, True, (0, 0, 0))
-    text_rect = surface_versus_text.get_rect(center=versus_text_pos)
+        # game_state = board_backend.game_state() # load game state
+        # load_images()  # load images of chess pieces only once
 
-    screen.blit(surface_versus_text, text_rect)
+        self.screen.fill("#FFFFFF")  # Filling only at beginning for code efficiency
+        self.__update()
 
+        # for image in IMAGES:
+        #     screen.blit(pygame.transform.scale(pygame.image.load(IMAGES[image]), (SQUARE_SIZE, SQUARE_SIZE)), (500, 490))
 
-def update(screen: pygame.Surface) -> None:
-    """Update the given screen."""
-    draw_board(screen)
-    load_images()
+        # Font Resizing to be worked on
+        self.__draw_text()
 
+        running = True
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
 
-def main() -> None:
-    """Main Function"""
-    pygame.display.set_caption("Wild Chess")
+                current_width, current_height = self.get_screen_res()
+                if self.window_width != current_width or self.window_height != current_height:
+                    self.screen.fill("#FFFFFF")
+                    self.__update()
 
-    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.RESIZABLE)
-    clock = pygame.time.Clock()
+            clock.tick(self.FPS)
+            pygame.display.flip()
 
-    # game_state = board_backend.game_state() #load game state
-    # load_images()  # load images of chess pieces only once
-
-    screen.fill("#FFFFFF")  # Filling only at beginning for code efficiency
-    update(screen)  # type: ignore
-
-    # for image in IMAGES:
-    #     screen.blit(pygame.transform.scale(pygame.image.load(IMAGES[image]), (SQUARE_SIZE, SQUARE_SIZE)), (500, 490))
-
-    # Font Resizing to be worked on
-    draw_text(screen)  # type: ignore
-
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-            if WINDOW_WIDTH != pygame.display.Info().current_w or WINDOW_HEIGHT != pygame.display.Info().current_h:
-                screen.fill("#FFFFFF")
-                update(screen)  # type: ignore
-
-        clock.tick(FPS)
-        pygame.display.flip()
-
-
-if __name__ == "__main__":
-    main()
+    def get_screen_res(self) -> tuple[int, int]:
+        """Function to get the user's screen resolution"""
+        display_info = pygame.display.Info()
+        return (display_info.current_w, display_info.current_h)
