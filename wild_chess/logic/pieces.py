@@ -10,9 +10,9 @@ import typing
 class ChessPiece:
     """Base class for chess pieces"""
 
-    PATH: typing.Final[str] = "wild_chess/assets/img/chess_pieces/"
+    PATH: typing.Final[str] = "wild_chess/assets/img/chess_pieces"
     color: str
-    possible_moves: typing.Callable[[], typing.List[tuple[int, int]]]
+    possible_moves: typing.Callable[[list[list[ChessPiece]]], list[tuple[int, int]]]
 
     def __init__(self, position: tuple[int, int], player: str) -> None:
         self.position = position
@@ -143,49 +143,70 @@ class Pawn(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the pawn."""
         self.possibility = []
+
         if self.color == "white":
             if self.position[1] == 1:
                 self.possibility.append((self.position[0], self.position[1] + 2))
+
             self.possibility.append((self.position[0], self.position[1] + 1))
-            self.possibility.append(x) if (x := (self.position[0] + 1, self.position[1] + 1)) and board[x[0]][
-                x[1]
-            ] is not None and board[x[0]][x[1]].player != self.player else None
-            self.possibility.append(x) if (x := (self.position[0] + 1, self.position[1] - 1)) and board[x[0]][
-                x[1]
-            ] is not None and board[x[0]][x[1]].player != self.player else None
-            self.possibility.append((self.position[0] + 1, self.position[1] - 1))
-            if (x := board[self.position[0] - 1][self.position[1]]) is not None and x.color != self.color:
+
+            x = (self.position[0] + 1, self.position[1] + 1)
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+                self.possibility.append(x)
+
+            x = (self.position[0] + 1, self.position[1] - 1)
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+                self.possibility.append(x)
+
+            self.possibility.append(x)
+
+            y = board[self.position[0] - 1][self.position[1]]
+            if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] - 1, self.position[1] + 1))
-            if (x := board[self.position[0] + 1][self.position[1]]) is not None and x.color != self.color:
+
+            y = board[self.position[0] + 1][self.position[1]]
+            if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] + 1, self.position[1] + 1))
+
         else:
             if self.position[1] == 6:
                 self.possibility.append((self.position[0], self.position[1] - 2))
+
             self.possibility.append((self.position[0], self.position[1] - 1))
-            self.possibility.append(x) if (x := (self.position[0] - 1, self.position[1] - 1)) and board[x[0]][
-                x[1]
-            ] is not None and board[x[0]][x[1]].player != self.player else None
-            self.possibility.append(x) if (x := (self.position[0] - 1, self.position[1] + 1)) and board[x[0]][
-                x[1]
-            ] is not None and board[x[0]][x[1]].player != self.player else None
-            if (x := board[self.position[0] - 1][self.position[1]]) is not None and x.color != self.color:
+
+            x = (self.position[0] - 1, self.position[1] - 1)
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+                self.possibility.append(x)
+
+            x = (self.position[0] - 1, self.position[1] + 1)
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+                self.possibility.append(x)
+
+            y = board[self.position[0] - 1][self.position[1]]
+            if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] - 1, self.position[1] - 1))
-            if (x := board[self.position[0] + 1][self.position[1]]) is not None and x.color != self.color:
+
+            y = board[self.position[0] + 1][self.position[1]]
+            if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] + 1, self.position[1] - 1))
+
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
 
     def check_promotion(self) -> bool:
         """
         Check if the pawn has reached the end of the board.
+
         If so, promote it to a queen.
         """
         if self.color == "white":
             if self.position[1] == 7:
                 return True
+
         else:
             if self.position[1] == 0:
                 return True
+
         return False
 
 
