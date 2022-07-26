@@ -14,9 +14,10 @@ class ChessPiece:
     color: str
     possible_moves: typing.Callable[[list[list[ChessPiece]]], list[tuple[int, int]]]
 
-    def __init__(self, position: tuple[int, int], player: str) -> None:
+    def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         self.position = position
         self.player = player
+        self.color = color
 
     def move(self, new_position: tuple[int, int]) -> None:
         """
@@ -133,10 +134,9 @@ class Pawn(ChessPiece):
     takeable: bool = True
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/pawn.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     # TODO: Heavily refactor and clean this method, and the whole file
@@ -217,10 +217,9 @@ class Rook(ChessPiece):
     takeable: bool = True
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/rook.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
@@ -238,10 +237,9 @@ class Knight(ChessPiece):
     takeable: bool = True
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/knight.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
@@ -266,10 +264,9 @@ class Bishop(ChessPiece):
     takeable: bool = True
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/bishop.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
@@ -287,10 +284,9 @@ class Queen(ChessPiece):
     takeable: bool = True
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/queen.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
@@ -309,10 +305,9 @@ class King(ChessPiece):
     takeable: bool = False
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
-        super().__init__(position, player)
+        super().__init__(position, player, color)
         self.image = f"{self.PATH}/king.{color}.png"
         self.possibility: list[tuple[int, int]] = []
-        self.color = color
         self.moves: list[tuple[int, int]] = []
 
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
