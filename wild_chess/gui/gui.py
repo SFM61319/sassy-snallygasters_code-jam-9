@@ -35,15 +35,7 @@ class Game:
 
     def __init__(self) -> None:
         pygame.init()
-        screen_res = self.get_screen_res()
-
-        self.window_width = screen_res[0]
-        self.window_height = round(screen_res[1] * 0.95)
-
-        self.board_width = self.board_height = round(self.window_height * 0.85)
-        self.board_dfe = round(self.window_height * 0.05)
-        self.square_size = self.board_height // self.SQUARES
-        self.border_offset = (2, 0, 2, 0)
+        self.use_defaults()
         self.images = {}
 
     def __load_images(self) -> None:
@@ -56,6 +48,7 @@ class Game:
 
     def __draw_board(self) -> None:
         """Draws the UI."""
+        self.use_defaults()
         board_color = (255, 0, 0)
         offset_l = self.border_offset[0]
         offset_r = self.border_offset[2] + offset_l
@@ -148,3 +141,15 @@ class Game:
         """Function to get the user's screen resolution"""
         display_info = pygame.display.Info()
         return (display_info.current_w, display_info.current_h)
+
+    def use_defaults(self) -> None:
+        """Resets the properties to the default values"""
+        screen_res = self.get_screen_res()
+
+        self.window_width = screen_res[0]
+        self.window_height = round(screen_res[1] * 0.95)
+
+        self.board_width = self.board_height = round(self.window_height * 0.85)
+        self.board_dfe = round(self.window_height * 0.05)
+        self.square_size = self.board_height // self.SQUARES
+        self.border_offset = (2, 0, 2, 0)
