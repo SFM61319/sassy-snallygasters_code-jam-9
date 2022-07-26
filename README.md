@@ -2,7 +2,7 @@
 
 *Python Code Jam 9 submission by* Sassy Snallygasters.
 
-## How to run
+## How to play
 
 Run this command:
 
