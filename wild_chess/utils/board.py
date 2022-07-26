@@ -14,9 +14,6 @@ class Board:
 
     board: list[list[typing.Optional[pieces.ChessPiece]]]
 
-    # TODO: Update this dict after every legal move
-    piece_positions: dict[str, dict[type[pieces.ChessPiece], list[tuple[int, int]]]]
-
     def __init__(self) -> None:
         self.board = [
             [None, None, None, None, None, None, None, None],
@@ -53,15 +50,11 @@ class Board:
         for i in range(8):
             self.board[1][i] = pieces.Pawn((1, i), player1.name, player1.color)
             self.board[6][i] = pieces.Pawn((6, i), player2.name, player2.color)
-            self.piece_positions[player1.color][pieces.Pawn].append((1, i))
-            self.piece_positions[player2.color][pieces.Pawn].append((6, i))
 
             random_piece = all_special_pieces.pop()
 
             self.board[0][i] = random_piece((0, i), player1.name, player1.color)
             self.board[7][i] = random_piece((7, i), player2.name, player2.color)
-            self.piece_positions[player1.color][random_piece].append((0, i))
-            self.piece_positions[player2.color][random_piece].append((7, i))
 
     def check_check(self, player: data.PlayerAttributes, board: typing.List[typing.List[pieces.ChessPiece]] = None) -> bool:
         """
