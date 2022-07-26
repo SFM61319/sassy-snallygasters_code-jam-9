@@ -1,0 +1,1 @@
+"""wild_chess/gui"""
