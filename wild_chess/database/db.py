@@ -2,13 +2,13 @@
 
 
 from __future__ import annotations
+
 import typing
 
 import asyncpg
 
-from wild_chess.utils import data
 from wild_chess.database import postgres
-
+from wild_chess.utils import data
 
 __all__: tuple[str, ...] = ("PlayerDB",)
 

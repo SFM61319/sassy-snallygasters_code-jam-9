@@ -55,6 +55,74 @@ class Board:
         self.board[0][4] = pieces.King((0, 4), player1.name, player1.color)
         self.board[7][4] = pieces.King((7, 4), player2.name, player2.color)
 
+    def check_check(self, player: data.PlayerAttributes, board: typing.List[typing.List[pieces.ChessPiece]] = None) -> bool:
+        """
+        Check if the player is in check.
+
+        :param player:
+        :param board:
+        :return:
+        """
+        if board is None:
+            board = self.board
+        colors = ["white", "black"]
+        colors.remove(player.color)
+        player_king = set([j.position for i in board for j in i if isinstance(j, pieces.King) and j.color == player.color][0])
+        opponent_pieces = [j for i in board for j in i if j.color == colors[0]]
+        moves = set([j.possible_moves() for j in opponent_pieces])
+        if player_king & moves:
+            return True
+        return False
+
+    def check_checkmate(self, player: data.PlayerAttributes) -> bool:
+        """
+        Check if the player is in checkmate.
+
+        :param player:
+        :return:
+        """
+        if self.check_check(player):
+            dummy_board = self.board.copy()
+            player_pieces = [j for i in self.board for j in i if j.color == player.color]
+            for i in player_pieces:
+                for j in i.possible_moves():
+                    dummy_board[j[0]][j[1]] = i
+                    dummy_board[i.position[0]][i.position[1]] = None
+                    if not self.check_check(player, dummy_board):
+                        return False
+                    dummy_board[i.position[0]][i.position[1]] = i
+                    dummy_board[j[0]][j[1]] = None
+            return True
+
+    def check_el_passant(
+        self, player: data.PlayerAttributes, old: typing.Tuple[int, int], new: typing.Tuple[int, int]
+    ) -> bool:
+        """
+        Check if the player is in el passant.
+
+        :param player:
+        :param old:
+        :param new:
+        :return:
+        """
+        if not isinstance(self.board[old[0]][old[1]], pieces.Pawn):
+            return False
+        if (x := self.board[old[0] - 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+            if player.color == "white":
+                if (old[0] - 1, old[1] + 1) == new:
+                    return True
+            else:
+                if (old[0] - 1, old[1] - 1) == new:
+                    return True
+        if (x := self.board[old[0] + 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+            if player.color == "white":
+                if (old[0] + 1, old[1] + 1) == new:
+                    return True
+            else:
+                if (old[0] + 1, old[1] - 1) == new:
+                    return True
+        return False
+
 
 # TODO: Refactor this class
 class Team(Board):
