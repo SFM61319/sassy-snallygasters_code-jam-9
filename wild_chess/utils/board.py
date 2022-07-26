@@ -95,7 +95,7 @@ class Board:
                     dummy_board[j[0]][j[1]] = None
             return True
 
-    def check_el_passant(
+    def check_en_passant(
         self, player: data.PlayerAttributes, old: typing.Tuple[int, int], new: typing.Tuple[int, int]
     ) -> bool:
         """
