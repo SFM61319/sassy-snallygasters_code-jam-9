@@ -1,1 +1,1 @@
-from .setup import Setup
+"""wild_chess/setup"""
