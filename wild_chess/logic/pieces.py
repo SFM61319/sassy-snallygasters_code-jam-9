@@ -134,7 +134,7 @@ class Pawn(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".pawn.png"
+        self.image = f"{self.PATH}/pawn.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
@@ -218,7 +218,7 @@ class Rook(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".rook.png"
+        self.image = f"{self.PATH}/rook.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
@@ -239,7 +239,7 @@ class Knight(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".knight.png"
+        self.image = f"{self.PATH}/knight.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
@@ -267,7 +267,7 @@ class Bishop(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".bishop.png"
+        self.image = f"{self.PATH}/bishop.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
@@ -288,7 +288,7 @@ class Queen(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".queen.png"
+        self.image = f"{self.PATH}/queen.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
@@ -310,7 +310,7 @@ class King(ChessPiece):
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         super().__init__(position, player)
-        self.image = self.PATH + color + ".king.png"
+        self.image = f"{self.PATH}/king.{color}.png"
         self.possibility: list[tuple[int, int]] = []
         self.color = color
         self.moves: list[tuple[int, int]] = []
