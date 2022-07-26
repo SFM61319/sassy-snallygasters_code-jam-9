@@ -34,6 +34,7 @@ class Game:
     images: dict[str, pathlib.Path]
 
     def __init__(self) -> None:
+        pygame.init()
         screen_res = self.get_screen_res()
 
         self.window_width = screen_res[0]
@@ -111,7 +112,6 @@ class Game:
 
     def init(self) -> None:
         """Starts the GUI."""
-        pygame.init()
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
 
