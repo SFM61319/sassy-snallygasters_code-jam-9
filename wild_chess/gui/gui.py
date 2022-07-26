@@ -5,7 +5,6 @@ import pathlib
 import typing
 
 import pygame
-import pygame.freetype
 
 # import board_backend
 
