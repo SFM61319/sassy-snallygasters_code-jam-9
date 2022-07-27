@@ -31,6 +31,7 @@ class PlayerDB(postgres.DatabaseModel):
         await self.exec_write_query(
             """CREATE TABLE IF NOT EXISTS players(
                                        name TEXT PRIMARY KEY,
+                                       password TEXT,
                                        wins BIGINT,
                                        losses BIGINT,
                                        ties BIGINT,
@@ -53,12 +54,13 @@ class PlayerDB(postgres.DatabaseModel):
         record = await self.exec_fetchone("SELECT * FROM players WHERE name = $1", (username,))
         return data.PlayerRecord(*record) if record else None
 
-    async def create_player(self, username: str) -> typing.Optional[data.PlayerRecord] | bool:
+    async def create_player(self, username: str, password: str) -> typing.Optional[data.PlayerRecord] | bool:
         """
         Create a new player.
 
         :param username:
         :type username: str
+        :param password: str
         :return:
         :rtype: typing.Optional[data.PlayerRecord] | bool
         """
@@ -68,9 +70,10 @@ class PlayerDB(postgres.DatabaseModel):
             return False
 
         await self.exec_write_query(
-            "INSERT INTO players VALUES ($1, 0, 0, 0, $2)",
+            "INSERT INTO players VALUES ($1, $2, 0, 0, 0, $3)",
             (
                 username,
+                password,
                 [],
             ),
         )

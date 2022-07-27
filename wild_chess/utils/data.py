@@ -12,6 +12,7 @@ class PlayerRecord:  # model for player data
     """
 
     player_name: str
+    password: str
     wins: int
     losses: int
     ties: int

@@ -3,7 +3,7 @@
 
 import pathlib
 import typing
-
+from ..logic import pieces
 import pygame
 
 # import board_backend
@@ -45,7 +45,7 @@ class Game:
             self.images[f"{piece_type}.white"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.white.png"
             self.images[f"{piece_type}.black"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.black.png"
 
-    def __draw_board(self) -> None:
+    def __draw_board(self, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Draws the UI."""
         self.use_defaults()
         board_color = (255, 0, 0)
@@ -80,6 +80,12 @@ class Game:
                         self.square_size,
                     ),
                 )
+                '''
+                if board[row][column] is not None:
+                    image = pygame.image.load(self.images[f"{board[row][column].piece_type}.{board[row][column].color}"])
+                    image = pygame.transform.scale(image, (self.square_size, self.square_size))
+                    self.screen.blit(image, (self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size), self.board_dfe + (row * self.square_size)))
+                '''
 
     def __draw_text(self) -> None:
         """Draw text in window"""
@@ -97,12 +103,12 @@ class Game:
 
         self.screen.blit(surface_versus_text, text_rect)
 
-    def __update(self) -> None:
+    def __update(self, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Update screen."""
-        self.__draw_board()
+        self.__draw_board(board)
         self.__load_images()
 
-    def init(self) -> None:
+    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -114,7 +120,7 @@ class Game:
         # load_images()  # load images of chess pieces only once
 
         self.screen.fill("#FFFFFF")  # Filling only at beginning for code efficiency
-        self.__update()
+        self.__update(board)
 
         # for image in IMAGES:
         #     screen.blit(pygame.transform.scale(pygame.image.load(IMAGES[image]), (SQUARE_SIZE, SQUARE_SIZE)), (500, 490))
@@ -131,15 +137,15 @@ class Game:
                 current_width, current_height = self.get_screen_res()
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#FFFFFF")
-                    self.__update()
-
+                    self.__update(board)
             clock.tick(self.FPS)
             pygame.display.flip()
 
-    def get_screen_res(self) -> tuple[int, int]:
+    @staticmethod
+    def get_screen_res() -> tuple[int, int]:
         """Function to get the user's screen resolution"""
         display_info = pygame.display.Info()
-        return (display_info.current_w, display_info.current_h)
+        return display_info.current_w, display_info.current_h
 
     def use_defaults(self) -> None:
         """Resets the properties to the default values"""

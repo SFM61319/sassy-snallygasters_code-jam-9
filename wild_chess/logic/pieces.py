@@ -10,22 +10,30 @@ import typing
 class ChessPiece:
     """Base class for chess pieces"""
 
+    piece_type: str
     PATH: typing.Final[str] = "wild_chess/assets/img/chess_pieces"
     color: str
     possible_moves: typing.Callable[[list[list[ChessPiece]]], list[tuple[int, int]]]
+    image: str
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
         self.position = position
         self.player = player
         self.color = color
 
-    def move(self, new_position: tuple[int, int]) -> None:
+    def move(self, new_position: tuple[int, int], board: list[list[ChessPiece | None]], en_passant: tuple[int, int] = None) -> None:
         """
         Move the piece to a new position.
 
         :param new_position:
+        :param board:
+        :param en_passant:
         :type new_position: tuple[int, int]
         """
+        board[new_position[0]][new_position[1]] = self
+        board[self.position[0]][self.position[1]] = None
+        if en_passant:
+            board[en_passant[0]][en_passant[1]] = None
         self.position = new_position
 
     @staticmethod
