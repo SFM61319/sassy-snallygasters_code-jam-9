@@ -173,3 +173,21 @@ class PlayerDB(postgres.DatabaseModel):
         """Get all players."""
         records = await self.exec_fetchall("SELECT * FROM players")
         return [data.PlayerRecord(*record) for record in records]
+
+    async def check_password(self, username: str, password: str) -> bool:
+        """
+        Check if a player's password is correct.
+
+        :param username:
+        :type username: str
+        :param password:
+        :type password: str
+        :return:
+        :rtype: bool
+        """
+        player = await self.find_player(username)
+
+        if player is None:
+            return False
+
+        return player.password == password
