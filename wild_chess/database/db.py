@@ -191,3 +191,13 @@ class PlayerDB(postgres.DatabaseModel):
             return False
 
         return player.password == password
+
+    async def leaderboard(self) -> list[data.PlayerRecord]:
+        """
+        Get the leaderboard.
+
+        :return:
+        :rtype: list[data.PlayerRecord]
+        """
+        records = await self.exec_fetchall("SELECT * FROM players ORDER BY wins DESC LIMIT 10")
+        return [data.PlayerRecord(*record) for record in records]
