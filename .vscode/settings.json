@@ -32,6 +32,30 @@
             "source.fixAll": true
         },
     },
+    "[html]": {
+        "editor.tabSize": 2
+    },
+    "[css]": {
+        "editor.tabSize": 2
+    },
+    "[scss]": {
+        "editor.tabSize": 2
+    },
+    "[less]": {
+        "editor.tabSize": 2
+    },
+    "[javascript]": {
+        "editor.tabSize": 2
+    },
+    "[javascriptreact]": {
+        "editor.tabSize": 2
+    },
+    "[typescript]": {
+        "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+        "editor.tabSize": 2
+    },
     "autoDocstring.docstringFormat": "sphinx",
     "autoDocstring.guessTypes": true,
     "autoDocstring.includeExtendedSummary": true,
@@ -56,6 +80,7 @@
         "rcfile",
         "rtype",
         "Sharicks's",
-        "Snallygasters"
+        "Snallygasters",
+        "websockets"
     ]
 }

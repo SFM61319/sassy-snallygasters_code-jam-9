@@ -1,10 +1,12 @@
 """Pygame GUI"""
-
+# pylint: disable=R0902
 
 import pathlib
 import typing
-from ..logic import pieces
+
 import pygame
+
+from wild_chess.logic import pieces
 
 # import board_backend
 
@@ -42,13 +44,13 @@ class Game:
         piece_types = ("pawn", "rook", "knight", "bishop", "queen", "king")
 
         for piece_type in piece_types:
-            self.images[f"{piece_type}.white"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.white.png"
-            self.images[f"{piece_type}.black"] = self.IMAGE_ASSETS_PATH / f"{piece_type}.black.png"
+            self.images[f"{piece_type}.white"] = pygame.image.load(self.IMAGE_ASSETS_PATH / f"{piece_type}.white.png")
+            self.images[f"{piece_type}.black"] = pygame.image.load(self.IMAGE_ASSETS_PATH / f"{piece_type}.black.png")
 
-    def __draw_board(self, board: list[list[pieces.ChessPiece | None]]) -> None:
+    def __draw_board(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Draws the UI."""
         self.use_defaults()
-        board_color = (255, 0, 0)
+        board_color = (0, 120, 212)
         offset_l = self.border_offset[0]
         offset_r = self.border_offset[2] + offset_l
 
@@ -80,18 +82,23 @@ class Game:
                         self.square_size,
                     ),
                 )
-                '''
+
                 if board[row][column] is not None:
-                    image = pygame.image.load(self.images[f"{board[row][column].piece_type}.{board[row][column].color}"])
+                    image = self.images[f"{board[row][column].piece_type.lower()}.{board[row][column].color}"]
                     image = pygame.transform.scale(image, (self.square_size, self.square_size))
-                    self.screen.blit(image, (self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size), self.board_dfe + (row * self.square_size)))
-                '''
+                    self.screen.blit(
+                        image,
+                        (
+                            self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size),
+                            self.board_dfe + (row * self.square_size),
+                        ),
+                    )
 
     def __draw_text(self) -> None:
         """Draw text in window"""
         font = pygame.font.SysFont("Times New Roman", 30)
 
-        # TODO: Use player usernames instead
+        # TODO: Use player usernames instead # pylint: disable=W0511
         player_1_text = "Player 1"
         player_2_text = "Player 2"
 
@@ -103,12 +110,12 @@ class Game:
 
         self.screen.blit(surface_versus_text, text_rect)
 
-    def __update(self, board: list[list[pieces.ChessPiece | None]]) -> None:
+    def __update(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Update screen."""
         self.__draw_board(board)
         self.__load_images()
 
-    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:
+    def init(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -116,8 +123,7 @@ class Game:
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
         clock = pygame.time.Clock()
 
-        # game_state = board_backend.game_state() # load game state
-        # load_images()  # load images of chess pieces only once
+        self.__load_images()  # load images of chess pieces only once
 
         self.screen.fill("#FFFFFF")  # Filling only at beginning for code efficiency
         self.__update(board)
