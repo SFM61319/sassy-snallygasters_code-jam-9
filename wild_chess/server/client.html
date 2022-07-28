@@ -1,49 +1,16 @@
 <!DOCTYPE html>
-
-<html lang="en">
-
+<html lang="en-US" dir="ltr">
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>WebSocker Client</title>
-
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>WebSocket Client</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" type="text/css" media="screen" href="./style.css"> -->
+  <script type="text/javascript" src="./script.js" defer></script>
 </head>
-
 <body>
-
-    <button onclick="contactServer">Click Here</button>
-
+  <div id="root">
+    <button id="contact-server-button">Click Here</button>
+  </div>
 </body>
-
-<script>
-
-    const socket = new WebSocket('ws://localhost:8000');
-
-socket.addEventListener('open', function (event) {
-
-    socket.send('Connection Established');
-
-});
-
-
-
-socket.addEventListener('message', function (event) {
-
-    console.log(event.data);
-
-});
-
-const contactServer = () => {
-
-    socket.send("Initialize");
-
-}
-
-</script>
-
 </html>
