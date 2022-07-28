@@ -7,7 +7,7 @@ from xmlrpc.client import Boolean
 
 import pygame
 
-from ..logic import pieces
+from wild_chess.logic import pieces
 
 # import board_backend
 

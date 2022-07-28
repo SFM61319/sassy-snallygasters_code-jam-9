@@ -9,7 +9,13 @@ license = "MIT"
 python = "3.10.*"
 asyncpg = "~0.26.0"
 pygame = "~2.1.2"
+<<<<<<< HEAD
+websockets = "^10.3"
+fastapi = "^0.79.0"
+uvicorn = "^0.18.2"
+=======
 websockets = "~10.3"
+>>>>>>> a129cecff5ed3778ea324db4444e9dad5b08b96b
 
 [tool.poetry.dev-dependencies]
 black = "~22.6.0"
