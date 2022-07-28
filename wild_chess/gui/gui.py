@@ -80,12 +80,19 @@ class Game:
                         self.square_size,
                     ),
                 )
-                '''
-                if board[row][column] is not None:
-                    image = pygame.image.load(self.images[f"{board[row][column].piece_type}.{board[row][column].color}"])
+
+                if board[row][column]:
+                    image = pygame.image.load(
+                        f"assets/img/chess_pieces/{board[row][column].piece_type.lower()}.{board[row][column].color}.png"
+                    )
                     image = pygame.transform.scale(image, (self.square_size, self.square_size))
-                    self.screen.blit(image, (self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size), self.board_dfe + (row * self.square_size)))
-                '''
+                    self.screen.blit(
+                        image,
+                        (
+                            self.board_dfe + self.window_width / 2 - self.window_height / 2 + (column * self.square_size),
+                            self.board_dfe + (row * self.square_size),
+                        ),
+                    )
 
     def __draw_text(self) -> None:
         """Draw text in window"""
