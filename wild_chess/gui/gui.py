@@ -156,7 +156,7 @@ class Game:
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    if self.__on_button:
+                    if self.__on_button and menu == True:
                         menu = False
                         self.__update(board)
 
@@ -166,7 +166,7 @@ class Game:
                 self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (0, 0, 0))
                 if self.__on_button(mouse_x, mouse_y):
                     self.__draw_button((0, 80, 172))
-                    self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (0, 0, 0))
+                    self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (255, 255, 255))
             else:
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
