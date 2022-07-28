@@ -48,7 +48,7 @@ class Game:
     def __draw_board(self, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Draws the UI."""
         self.use_defaults()
-        board_color = (255, 0, 0)
+        board_color = (0, 120, 212)
         offset_l = self.border_offset[0]
         offset_r = self.border_offset[2] + offset_l
 

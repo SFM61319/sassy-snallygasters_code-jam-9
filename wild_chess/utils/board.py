@@ -45,22 +45,24 @@ class Board:
             pieces.Bishop,
             pieces.Queen,
             pieces.King,
-            pieces.Bishop,
-            pieces.Knight,
-            pieces.Rook,
+            pieces.Pawn,
         ]
-        random.shuffle(all_special_pieces)
 
         for i in range(8):
-            self.board[1][i] = pieces.Pawn((1, i), player1.name, player1.color)
-            self.board[6][i] = pieces.Pawn((6, i), player2.name, player2.color)
+            random_piece = random.choice(all_special_pieces)
+            if i == 4:
+                self.board[0][4] = pieces.King((0, 4), player1.name, player1.color)
+                self.board[7][4] = pieces.King((7, 4), player2.name, player2.color)
+            else:
+                random_piece2 = random.choice(all_special_pieces)
+                self.board[0][i] = random_piece2((0, i), player1.name, player1.color)
+                self.board[7][i] = random_piece2((7, i), player2.name, player2.color)
+            self.board[1][i] = random_piece((1, i), player1.name, player1.color)
+            self.board[6][i] = random_piece((6, i), player2.name, player2.color)
 
-            random_piece = all_special_pieces.pop()
-
-            self.board[0][i] = random_piece((0, i), player1.name, player1.color)
-            self.board[7][i] = random_piece((7, i), player2.name, player2.color)
-
-    def check_check(self, player: data.PlayerAttributes, board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None) -> bool:
+    def check_check(
+        self, player: data.PlayerAttributes, board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None
+    ) -> bool:
         """
         Check if the player is in check.
 
@@ -116,17 +118,17 @@ class Board:
         if (x := self.board[old[0] - 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
                 if (old[0] - 1, old[1] + 1) == new:
-                    return old[0]-1, old[1]
+                    return old[0] - 1, old[1]
             else:
                 if (old[0] - 1, old[1] - 1) == new:
-                    return old[0]-1, old[1]
+                    return old[0] - 1, old[1]
         if (x := self.board[old[0] + 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
                 if (old[0] + 1, old[1] + 1) == new:
-                    return old[0]+1, old[1]
+                    return old[0] + 1, old[1]
             else:
                 if (old[0] + 1, old[1] - 1) == new:
-                    return old[0]+1, old[1]
+                    return old[0] + 1, old[1]
         return None
 
     def check_king_mouse_slip(
@@ -152,7 +154,9 @@ class Board:
         x = self.board[old[0] - 1][old[1] + 1]
         y = self.board[old[0] + 1][old[1] - 1]
 
-        if (isinstance(x, pieces.Pawn) and x.color != player.color) or (isinstance(y, pieces.Pawn) and y.color != player.color):
+        if (isinstance(x, pieces.Pawn) and x.color != player.color) or (
+            isinstance(y, pieces.Pawn) and y.color != player.color
+        ):
             return True
         return False
 
