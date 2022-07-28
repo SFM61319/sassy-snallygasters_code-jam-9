@@ -6,7 +6,7 @@ import typing
 
 from wild_chess.logic import pieces
 from wild_chess.utils import data
-from wild_chess.gui import Game
+from wild_chess.gui import gui
 
 
 # Create a class board and subclass it to have two teams
