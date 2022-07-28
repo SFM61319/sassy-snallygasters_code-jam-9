@@ -44,7 +44,6 @@ class Board:
             pieces.Knight,
             pieces.Bishop,
             pieces.Queen,
-            pieces.King,
             pieces.Pawn,
         ]
 
