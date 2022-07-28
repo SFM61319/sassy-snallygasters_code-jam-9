@@ -3,6 +3,7 @@
 
 import pathlib
 import typing
+from xmlrpc.client import Boolean
 
 import pygame
 
@@ -21,7 +22,7 @@ class Game:
     """
 
     SQUARES: typing.Literal[8] = 8
-    FPS: typing.Literal[15] = 15
+    FPS: typing.Literal[60] = 60
     IMAGE_ASSETS_PATH: pathlib.Path = pathlib.Path("assets/img/chess_pieces")
 
     screen: pygame.surface.Surface
@@ -84,6 +85,8 @@ class Game:
                 )
 
                 if board[row][column] is not None:
+                    if not self.images:
+                        self.__load_images()
                     image = self.images[f"{board[row][column].piece_type.lower()}.{board[row][column].color}"]
                     image = pygame.transform.scale(image, (self.square_size, self.square_size))
                     self.screen.blit(
@@ -94,55 +97,79 @@ class Game:
                         ),
                     )
 
-    def __draw_text(self) -> None:
+    def __draw_text(self, text: str, position: tuple, color: tuple) -> None:
         """Draw text in window"""
         font = pygame.font.SysFont("Times New Roman", 30)
 
         # TODO: Use player usernames instead # pylint: disable=W0511
-        player_1_text = "Player 1"
-        player_2_text = "Player 2"
 
-        versus_text = f"{player_1_text} VS {player_2_text}"
-        versus_text_pos = (self.board_dfe + (self.board_width // 2), (self.board_dfe * 2) + self.board_height)
+        render_text = font.render(text, True, color)
+        text_rect = render_text.get_rect(center=position)
 
-        surface_versus_text = font.render(versus_text, True, (0, 0, 0))
-        text_rect = surface_versus_text.get_rect(center=versus_text_pos)
-
-        self.screen.blit(surface_versus_text, text_rect)
+        self.screen.blit(render_text, text_rect)
 
     def __update(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Update screen."""
         self.__draw_board(board)
         self.__load_images()
 
+    def __draw_button(self, color) -> None:
+        pygame.draw.rect(
+            self.screen,
+            color,
+            pygame.Rect(
+                self.window_width / 2 - self.window_width / 12,
+                self.window_height / 2 - self.window_height / 24,
+                self.window_width / 6,
+                self.window_height / 12,
+            ),
+        )
+
+    def __on_button(self, mouse_x, mouse_y) -> Boolean:
+        if (
+            mouse_x >= self.window_width / 2 - self.window_width / 12
+            and mouse_x <= self.window_width / 2 + self.window_width / 12
+            and mouse_y >= self.window_height / 2 - self.window_height / 24
+            and mouse_y <= self.window_height / 2 + self.window_height / 24
+        ):
+            return True
+        return False
+
     def init(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
-
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
         clock = pygame.time.Clock()
+        menu = True
 
-        self.__load_images()  # load images of chess pieces only once
-
-        self.screen.fill("#FFFFFF")  # Filling only at beginning for code efficiency
-        self.__update(board)
-
-        # for image in IMAGES:
-        #     screen.blit(pygame.transform.scale(pygame.image.load(IMAGES[image]), (SQUARE_SIZE, SQUARE_SIZE)), (500, 490))
-
-        # Font Resizing to be worked on
-        self.__draw_text()
+        self.screen.fill("#202020")  # Filling only at beginning for code efficiency
+        if not menu:
+            self.__load_images()  # load images of chess pieces only once
+            self.__update(board)
+            self.__draw_text("P1 VS P2", (self.board_dfe + (self.board_width // 2), (self.board_dfe * 2) + self.board_height), (0, 0, 0))
 
         running = True
         while running:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if self.__on_button:
+                        menu = False
+                        self.__update(board)
 
-                current_width, current_height = self.get_screen_res()
+            current_width, current_height = self.get_screen_res()
+            if menu:
+                self.__draw_button((0, 120, 212))
+                self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (0, 0, 0))
+                if self.__on_button(mouse_x, mouse_y):
+                    self.__draw_button((0, 80, 172))
+                    self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (0, 0, 0))
+            else:
                 if self.window_width != current_width or self.window_height != current_height:
-                    self.screen.fill("#FFFFFF")
+                    self.screen.fill("#202020")
                     self.__update(board)
             clock.tick(self.FPS)
             pygame.display.flip()
