@@ -82,6 +82,7 @@ class Game:
                         self.square_size,
                     ),
                 )
+
     def __draw_pieces(self, board: list[list[pieces.ChessPiece]]) -> None:
         for row in range(self.SQUARES):
             for column in range(self.SQUARES):
@@ -98,6 +99,31 @@ class Game:
                         ),
                     )
 
+    def __move_piece(self, initial: tuple, final: tuple, board: list[list[pieces.ChessPiece]]):
+        square_colors = ["#DFDFDF", "#202020"]
+        overlap_color = square_colors[(initial[0] + initial[1]) % 2]
+        pygame.draw.rect(
+            self.screen,
+            overlap_color,
+            pygame.Rect(
+                self.board_dfe + self.window_width / 2 - self.window_height / 2 + (initial[1] * self.square_size),
+                self.board_dfe + (initial[0] * self.square_size),
+                self.square_size,
+                self.square_size,
+            ),
+        )
+        piece = self.images[f"{board[initial[0]][initial[1]].piece_type.lower()}.{board[initial[0]][initial[1]].color}"]
+        piece = pygame.transform.scale(piece, (self.square_size, self.square_size))
+        self.screen.blit(
+            piece,
+            (
+                self.board_dfe + self.window_width / 2 - self.window_height / 2 + (final[1] * self.square_size),
+                self.board_dfe + (final[0] * self.square_size),
+            ),
+        )
+        board[final[0]][final[1]] = board[initial[0]][initial[1]]
+        board[initial[0]][initial[1]] = None
+
     def __draw_text(self, text: str, font_size: int, position: tuple, color: tuple) -> None:
         """Draw text in window"""
         font = pygame.font.SysFont("Times New Roman", font_size)
@@ -107,9 +133,10 @@ class Game:
 
         self.screen.blit(render_text, text_rect)
 
-    def __update(self, board: list[list[pieces.ChessPiece]]) -> None:
+    def __update(self, possibles) -> None:
         """Update screen."""
         self.__draw_board()
+        self.__moves_highlight(possibles)
         self.__load_images()
 
     def __draw_button(self, color: tuple) -> None:
@@ -128,14 +155,14 @@ class Game:
     def __board_grid_detection(self, mouse_x: int, mouse_y: int) -> tuple[int, int] | None:
         """Check if mouse is in the bounds of the board and return position on the chess grid"""
         if (
-            self.board_dfe + self.window_width / 2 - self.window_height / 2 <= mouse_x
+            self.board_dfe + self.window_width / 2 - self.window_height / 2
+            <= mouse_x
             <= self.board_dfe + self.window_width / 2 - self.window_height / 2 + self.board_width
-            and self.board_dfe <= mouse_y
-            <= self.board_dfe + self.board_height
+            and self.board_dfe <= mouse_y <= self.board_dfe + self.board_height
         ):
             column_grid = (mouse_x - (self.board_dfe + self.window_width // 2 - self.window_height // 2)) // self.square_size
             row_grid = (mouse_y - (self.board_dfe)) // self.square_size
-            if (0 <= column_grid < self.SQUARES and 0 <= row_grid < self.SQUARES):
+            if 0 <= column_grid < self.SQUARES and 0 <= row_grid < self.SQUARES:
                 return (column_grid, row_grid)
             return None
         return None
@@ -146,18 +173,18 @@ class Game:
         move_colors = ["#67f757", "#f75757"]
         current_color = move_colors[0]
         for possible in possibles:
+            possible = (possible[1], possible[0])
             pygame.draw.rect(
                 self.screen,
                 current_color,
                 pygame.Rect(
-                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[0] * self.square_size),
-                    self.board_dfe + (possible[1] * self.square_size),
+                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[1] * self.square_size),
+                    self.board_dfe + (possible[0] * self.square_size),
                     self.square_size,
                     self.square_size,
                 ),
             )
-        #self.__draw_pieces(board)
-
+        # self.__draw_pieces(board)
 
     def __on_button(self, mouse_x: int, mouse_y: int) -> bool:
         """Check if mouse is on the "ENTER" button in the menu"""
@@ -183,6 +210,8 @@ class Game:
             self.__draw_pieces(board)
 
         running = True
+        piece_active = False
+        piece_pos = None
         while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 
@@ -193,16 +222,30 @@ class Game:
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if self.__on_button and menu:
                         menu = False
-                        self.__update(board)
+                        self.__draw_board()
+                        self.__load_images()
                         self.__draw_pieces(board)
 
                     elif not menu:
-                        grid_x, grid_y = self.__board_grid_detection(mouse_x, mouse_y)
 
-                        """Get the possible moves from pieces.py, returns a list of tuples"""
-                        possibles = board[grid_y][grid_x].possible_moves(board)
-                        self.__moves_highlight(possibles)
-                        self.__draw_pieces(board)
+                        grid = self.__board_grid_detection(mouse_x, mouse_y)
+                        if grid is not None:
+                            grid_x, grid_y = grid[0], grid[1]
+
+                            if piece_active is True and grid in possibles and board[piece_pos[0]][piece_pos[1]] is not None:
+                                self.__move_piece(piece_pos, grid, board)
+                                piece_pos = None
+                                piece_active = False
+                            elif piece_active is False and piece_pos != grid:
+                                """Get the possible moves from pieces.py, returns a list of tuples"""
+                                possibles = board[grid_y][grid_x].possible_moves(board)
+                                self.__update(possibles)
+                                self.__draw_pieces(board)
+                                piece_active = True
+                            else:
+                                self.__draw_board()
+                                self.__draw_pieces(board)
+                            piece_pos = (grid_x, grid_y)
 
             current_width, current_height = self.get_screen_res()
             current_height = round(current_height * 0.95)
@@ -214,13 +257,13 @@ class Game:
                     self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (255, 255, 255))
             else:
 
-
                 # if grid_check is not None: #Test Code - To be removed
                 #     print (grid_check)
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
-                self.__draw_text("P1 VS P2",
-                                 30, ((self.window_width // 2, (self.board_dfe * 2) + self.board_height)), (255, 255, 255))
+                self.__draw_text(
+                    "P1 VS P2", 30, ((self.window_width // 2, (self.board_dfe * 2) + self.board_height)), (255, 255, 255)
+                )
 
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
