@@ -3,7 +3,6 @@
 
 import pathlib
 import typing
-from xmlrpc.client import Boolean
 
 import pygame
 
@@ -97,11 +96,9 @@ class Game:
                         ),
                     )
 
-    def __draw_text(self, text: str, position: tuple, color: tuple) -> None:
+    def __draw_text(self, text: str, font_size: int, position: tuple, color: tuple) -> None:
         """Draw text in window"""
-        font = pygame.font.SysFont("Times New Roman", 30)
-
-        # TODO: Use player usernames instead # pylint: disable=W0511
+        font = pygame.font.SysFont("Times New Roman", font_size)
 
         render_text = font.render(text, True, color)
         text_rect = render_text.get_rect(center=position)
@@ -113,7 +110,8 @@ class Game:
         self.__draw_board(board)
         self.__load_images()
 
-    def __draw_button(self, color) -> None:
+    def __draw_button(self, color: tuple) -> None:
+        """Draws button on main menu"""
         pygame.draw.rect(
             self.screen,
             color,
@@ -125,12 +123,26 @@ class Game:
             ),
         )
 
-    def __on_button(self, mouse_x, mouse_y) -> Boolean:
+    def __board_grid_detection(self, mouse_x: int, mouse_y: int) -> tuple[int, int] | None:
+        """Check if mouse is in the bounds of the board and return position on the chess grid"""
         if (
-            mouse_x >= self.window_width / 2 - self.window_width / 12
-            and mouse_x <= self.window_width / 2 + self.window_width / 12
-            and mouse_y >= self.window_height / 2 - self.window_height / 24
-            and mouse_y <= self.window_height / 2 + self.window_height / 24
+            self.board_dfe + self.window_width / 2 - self.window_height / 2 <= mouse_x
+            <= self.board_dfe + self.window_width / 2 - self.window_height / 2 + self.board_width
+            and self.board_dfe <= mouse_y
+            <= self.board_dfe + self.board_height
+        ):
+            column_grid = (mouse_x - (self.board_dfe + self.window_width // 2 - self.window_height // 2)) // self.square_size
+            row_grid = (mouse_y - (self.board_dfe)) // self.square_size
+            if (0 <= column_grid < self.SQUARES and 0 <= row_grid < self.SQUARES):
+                return (column_grid, row_grid)
+            return None
+        return None
+
+    def __on_button(self, mouse_x: int, mouse_y: int) -> bool:
+        """Check if mouse is on the "ENTER" button in the menu"""
+        if (
+            self.window_width / 2 - self.window_width / 12 <= mouse_x <= self.window_width / 2 + self.window_width / 12
+            and self.window_height / 2 - self.window_height / 24 <= mouse_y <= self.window_height / 2 + self.window_height / 24
         ):
             return True
         return False
@@ -147,27 +159,36 @@ class Game:
         if not menu:
             self.__load_images()  # load images of chess pieces only once
             self.__update(board)
-            self.__draw_text("P1 VS P2", (self.board_dfe + (self.board_width // 2), (self.board_dfe * 2) + self.board_height), (0, 0, 0))
 
         running = True
         while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    if self.__on_button and menu == True:
+                    if self.__on_button and menu is True:
                         menu = False
                         self.__update(board)
 
             current_width, current_height = self.get_screen_res()
             if menu:
                 self.__draw_button((0, 120, 212))
-                self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (0, 0, 0))
+                self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (0, 0, 0))
                 if self.__on_button(mouse_x, mouse_y):
                     self.__draw_button((0, 80, 172))
-                    self.__draw_text("Enter", (self.window_width / 2, self.window_height / 2), (255, 255, 255))
+                    self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (255, 255, 255))
             else:
+                self.__board_grid_detection(mouse_x, mouse_y)
+
+                # if grid_check is not None: #Test Code - To be removed
+                #     print (grid_check)
+
+                # TODO: Use player usernames instead # pylint: disable=W0511
+                self.__draw_text("P1 VS P2",
+                                 30, ((self.window_width // 2, (self.board_dfe * 2) + self.board_height)), (255, 255, 255))
+
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
                     self.__update(board)
