@@ -65,9 +65,12 @@
         "blit",
         "docparams",
         "docstrings",
+        "fastapi",
         "fetchrow",
         "freetype",
         "isort",
+        "leaderboard",
+        "MOUSEBUTTONUP",
         "mypy",
         "noqa",
         "PGDATABASE",
@@ -81,6 +84,7 @@
         "rtype",
         "Sharicks's",
         "Snallygasters",
+        "uvicorn",
         "websockets"
     ]
 }
