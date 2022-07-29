@@ -178,8 +178,8 @@ class Game:
                 self.screen,
                 current_color,
                 pygame.Rect(
-                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[1] * self.square_size),
-                    self.board_dfe + (possible[0] * self.square_size),
+                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[0] * self.square_size),
+                    self.board_dfe + (possible[1] * self.square_size),
                     self.square_size,
                     self.square_size,
                 ),
