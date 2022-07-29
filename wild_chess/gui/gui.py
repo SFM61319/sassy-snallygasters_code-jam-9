@@ -142,7 +142,6 @@ class Game:
 
     def __moves_highlight(self, possibles: list[tuple]) -> None:
         """Function to highlight the possible squares"""
-        print(possibles)
         move_colors = ["#67f757", "#f75757"]
         current_color = move_colors[0]
         for possible in possibles:
@@ -150,8 +149,8 @@ class Game:
                 self.screen,
                 current_color,
                 pygame.Rect(
-                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[0] * self.square_size),
-                    self.board_dfe + (possible[1] * self.square_size),
+                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[1] * self.square_size),
+                    self.board_dfe + (possible[0] * self.square_size),
                     self.square_size,
                     self.square_size,
                 ),

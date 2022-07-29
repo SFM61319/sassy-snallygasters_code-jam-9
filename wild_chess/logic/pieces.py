@@ -36,75 +36,97 @@ class ChessPiece:
             board[en_passant[0]][en_passant[1]] = None
         self.position = new_position
 
-    @staticmethod
-    def find_diagonals(position: tuple[int, int], board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def find_diagonals(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """
         Finds diagonals.
 
-        :param position:
-        :type position: tuple[int, int]
         :param board:
         :type board: typing.Any]]
         :return:
         :rtype: list[tuple[int, int]]
         """
         positions = []
-        y, x = position
+        blacklist = []
 
-        def diagonal(dx: int, dy: int) -> None:
-            for p in itertools.count(start=1):
-                new_x = x + dx * p
-                new_y = y + dy * p
+        def check(x, y):
+            point = board[x][y]
+            dx = abs(x - self.position[0])
+            dy = abs(y - self.position[1])
+            nearby_positions = [(x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1), (x - 1, y - 1)]
+            near = [p for p in nearby_positions if 0 <= p[0] < 8 and 0 <= p[1] < 8]
+            for p in near:
+                d1x = abs(p[0] - self.position[0])
+                d1y = abs(p[1] - self.position[1])
+                if p in blacklist and d1x == d1y and d1x > 0:
+                    blacklist.append(p)
+                    return True
+            if (dx == dy) and (dx > 0):
+                positions.append((x, y))
+            if point and point.color != self.color and (dx == dy) and (dx > 0):
+                positions.append((x, y))
+                blacklist.append((x, y))
+                return True
+            return False
 
-                if 0 <= new_x < 8 and 0 <= new_y < 8:
-                    positions.append((new_x, new_y))
+        def right(x):
+            for j in range(self.position[1] + 1, 8):
+                broken = check(x, j)
+                if broken:
+                    return
+            else:
+                return
 
-                    if board[new_y][new_x] is not None:
-                        break
+        def left(x):
+            for j in range(self.position[1] - 1, -1, -1):
+                broken = check(x, j)
+                if broken:
+                    return
+            else:
+                return
 
-                else:
-                    break
+        for i in range(self.position[0] + 1, 8):
+            right(i)
+            left(i)
 
-        for i in (-1, 1):
-            for j in (-1, 1):
-                diagonal(i, j)
+        for i in range(self.position[0] - 1, -1, -1):
+            right(i)
+            left(i)
 
         return positions
 
-    @staticmethod
-    def find_sides(position: tuple[int, int], board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def find_sides(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """
         Finds sides.
 
-        :param position:
-        :type position: tuple[int, int]
         :param board:
         :type board: list[list[ChessPiece]]
         :return:
         :rtype: list[tuple[int, int]]
         """
         positions = []
+        for i in range(self.position[0] + 1, 8):
+            point = board[i][self.position[1]]
+            positions.append((i, self.position[1]))
+            if point and point.color != self.color:
+                break
 
-        for i in range(8):
-            if position[0] == i:
-                for j in range(8):
-                    if position[1] == j:
-                        continue
+        for i in range(self.position[0] - 1, -1, -1):
+            point = board[i][self.position[1]]
+            positions.append((i, self.position[1]))
+            if point and point.color != self.color:
+                break
 
-                    positions.append((i, j))
+        for i in range(self.position[1] + 1, 8):
+            point = board[self.position[0]][i]
+            positions.append((self.position[0], i))
+            if point and point.color != self.color:
+                break
 
-                    if board[i][j] is not None:
-                        break
-
-            elif position[1] == i:
-                for j in range(8):
-                    if position[0] == j:
-                        continue
-
-                    positions.append((j, i))
-
-                    if board[j][i] is not None:
-                        break
+        for i in range(self.position[1] - 1, -1, -1):
+            point = board[self.position[0]][i]
+            positions.append((self.position[0], i))
+            if point and point.color != self.color:
+                break
 
         return positions
 
@@ -151,12 +173,11 @@ class Pawn(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the pawn."""
         self.possibility = []
-
         if self.color == "white":
-            if self.position[1] == 1:
-                self.possibility.append((self.position[0], self.position[1] + 2))
+            if self.position[0] == 1:
+                self.possibility.append((self.position[0] + 2, self.position[1]))
 
-            self.possibility.append((self.position[0], self.position[1] + 1))
+            self.possibility.append((self.position[0] + 1, self.position[1]))
 
             x = (self.position[0] + 1, self.position[1] + 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
@@ -168,19 +189,19 @@ class Pawn(ChessPiece):
 
             self.possibility.append(x)
 
-            y = board[self.position[0] - 1][self.position[1]]
+            y = board[self.position[0]][self.position[1] - 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] - 1, self.position[1] + 1))
+                self.possibility.append((self.position[0] + 1, self.position[1] - 1))
 
-            y = board[self.position[0] + 1][self.position[1]]
+            y = board[self.position[0]][self.position[1] + 1]
             if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] + 1, self.position[1] + 1))
 
         else:
-            if self.position[1] == 6:
-                self.possibility.append((self.position[0], self.position[1] - 2))
+            if self.position[0] == 6:
+                self.possibility.append((self.position[0] - 2, self.position[1]))
 
-            self.possibility.append((self.position[0], self.position[1] - 1))
+            self.possibility.append((self.position[0] - 1, self.position[1]))
 
             x = (self.position[0] - 1, self.position[1] - 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
@@ -190,13 +211,13 @@ class Pawn(ChessPiece):
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
                 self.possibility.append(x)
 
-            y = board[self.position[0] - 1][self.position[1]]
+            y = board[self.position[0]][self.position[1] - 1]
             if y is not None and y.color != self.color:
                 self.possibility.append((self.position[0] - 1, self.position[1] - 1))
 
-            y = board[self.position[0] + 1][self.position[1]]
+            y = board[self.position[0]][self.position[1] + 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] + 1, self.position[1] - 1))
+                self.possibility.append((self.position[0] - 1, self.position[1] + 1))
 
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
@@ -233,7 +254,7 @@ class Rook(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the rook."""
         self.possibility = []
-        self.possibility.extend(self.find_sides(self.position, board))
+        self.possibility.extend(self.find_sides(board))
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
 
@@ -280,7 +301,7 @@ class Bishop(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the bishop."""
         self.possibility = []
-        self.possibility.extend(self.find_diagonals(self.position, board))
+        self.possibility.extend(self.find_diagonals(board))
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
 
@@ -300,8 +321,8 @@ class Queen(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the queen."""
         self.possibility = []
-        self.possibility.extend(self.find_sides(self.position, board))
-        self.possibility.extend(self.find_diagonals(self.position, board))
+        self.possibility.extend(self.find_sides(board))
+        self.possibility.extend(self.find_diagonals(board))
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
 
