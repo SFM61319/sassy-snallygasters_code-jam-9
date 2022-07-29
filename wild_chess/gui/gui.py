@@ -47,7 +47,7 @@ class Game:
             self.images[f"{piece_type}.white"] = pygame.image.load(self.IMAGE_ASSETS_PATH / f"{piece_type}.white.png")
             self.images[f"{piece_type}.black"] = pygame.image.load(self.IMAGE_ASSETS_PATH / f"{piece_type}.black.png")
 
-    def __draw_board(self, board: list[list[pieces.ChessPiece]]) -> None:
+    def __draw_board(self) -> None:
         """Draws the UI."""
         self.use_defaults()
         board_color = (0, 120, 212)
@@ -82,7 +82,9 @@ class Game:
                         self.square_size,
                     ),
                 )
-
+    def __draw_pieces(self, board: list[list[pieces.ChessPiece]]) -> None:
+        for row in range(self.SQUARES):
+            for column in range(self.SQUARES):
                 if board[row][column] is not None:
                     if not self.images:
                         self.__load_images()
@@ -107,7 +109,7 @@ class Game:
 
     def __update(self, board: list[list[pieces.ChessPiece]]) -> None:
         """Update screen."""
-        self.__draw_board(board)
+        self.__draw_board()
         self.__load_images()
 
     def __draw_button(self, color: tuple) -> None:
@@ -138,6 +140,25 @@ class Game:
             return None
         return None
 
+    def __moves_highlight(self, possibles: list[tuple]) -> None:
+        """Function to highlight the possible squares"""
+        print(possibles)
+        move_colors = ["#67f757", "#f75757"]
+        current_color = move_colors[0]
+        for possible in possibles:
+            pygame.draw.rect(
+                self.screen,
+                current_color,
+                pygame.Rect(
+                    self.board_dfe + self.window_width / 2 - self.window_height / 2 + (possible[0] * self.square_size),
+                    self.board_dfe + (possible[1] * self.square_size),
+                    self.square_size,
+                    self.square_size,
+                ),
+            )
+        #self.__draw_pieces(board)
+
+
     def __on_button(self, mouse_x: int, mouse_y: int) -> bool:
         """Check if mouse is on the "ENTER" button in the menu"""
         if (
@@ -159,6 +180,7 @@ class Game:
         if not menu:
             self.__load_images()  # load images of chess pieces only once
             self.__update(board)
+            self.__draw_pieces(board)
 
         running = True
         while running:
@@ -167,12 +189,23 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    if self.__on_button and menu is True:
+                    if self.__on_button and menu:
                         menu = False
                         self.__update(board)
+                        self.__draw_pieces(board)
+
+                    elif not menu:
+                        grid_x, grid_y = self.__board_grid_detection(mouse_x, mouse_y)
+
+                        """Get the possible moves from pieces.py, returns a list of tuples"""
+                        possibles = board[grid_y][grid_x].possible_moves(board)
+                        self.__moves_highlight(possibles)
+                        self.__draw_pieces(board)
 
             current_width, current_height = self.get_screen_res()
+            current_height = round(current_height * 0.95)
             if menu:
                 self.__draw_button((0, 120, 212))
                 self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (0, 0, 0))
@@ -180,7 +213,7 @@ class Game:
                     self.__draw_button((0, 80, 172))
                     self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (255, 255, 255))
             else:
-                self.__board_grid_detection(mouse_x, mouse_y)
+
 
                 # if grid_check is not None: #Test Code - To be removed
                 #     print (grid_check)
@@ -192,6 +225,8 @@ class Game:
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
                     self.__update(board)
+                    print(self.window_height, current_height)
+
             clock.tick(self.FPS)
             pygame.display.flip()
 
