@@ -1,14 +1,17 @@
-"""leaderboard function"""
+"""Leaderboard function"""
 
-from fastapi import APIRouter
 
-from wild_chess.database.db import PlayerDB
+import fastapi
 
-route = APIRouter()
+from wild_chess.database import db
+from wild_chess.utils import data
+
+
+route = fastapi.APIRouter()
 
 
 @route.get("/leaderboard")
-async def get_leaderboard() -> dict:
+async def get_leaderboard() -> dict[str, list[data.PlayerRecord]]:
     """Gets the leaderboard data"""
-    board = await PlayerDB().leaderboard()
+    board = await db.PlayerDB().leaderboard()
     return {"leaderboard": board}
