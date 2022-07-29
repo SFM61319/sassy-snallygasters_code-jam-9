@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import itertools
 import typing
 
 
@@ -48,7 +47,7 @@ class ChessPiece:
         positions = []
         blacklist = []
 
-        def check(x, y):
+        def check(x: int, y: int) -> bool:
             point = board[x][y]
             dx = abs(x - self.position[0])
             dy = abs(y - self.position[1])
@@ -68,7 +67,7 @@ class ChessPiece:
                 return True
             return False
 
-        def right(x):
+        def right(x: int) -> None:
             for j in range(self.position[1] + 1, 8):
                 broken = check(x, j)
                 if broken:
@@ -76,7 +75,7 @@ class ChessPiece:
             else:
                 return
 
-        def left(x):
+        def left(x: int) -> None:
             for j in range(self.position[1] - 1, -1, -1):
                 broken = check(x, j)
                 if broken:
