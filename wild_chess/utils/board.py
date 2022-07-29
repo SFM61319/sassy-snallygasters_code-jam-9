@@ -114,20 +114,20 @@ class Board:
         """
         if not isinstance(self.board[old[0]][old[1]], pieces.Pawn):
             return None
-        if (x := self.board[old[0] - 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+        if (x := self.board[old[0]][old[1] - 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
-                if (old[0] - 1, old[1] + 1) == new:
-                    return old[0] - 1, old[1]
+                if (old[0] + 1, old[1] - 1) == new:
+                    return old[0], old[1] - 1
             else:
                 if (old[0] - 1, old[1] - 1) == new:
-                    return old[0] - 1, old[1]
-        if (x := self.board[old[0] + 1][old[1]]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+                    return old[0], old[1] - 1
+        if (x := self.board[old[0]][old[1] + 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
                 if (old[0] + 1, old[1] + 1) == new:
-                    return old[0] + 1, old[1]
+                    return old[0], old[1] + 1
             else:
-                if (old[0] + 1, old[1] - 1) == new:
-                    return old[0] + 1, old[1]
+                if (old[0] - 1, old[1] + 1) == new:
+                    return old[0], old[1] + 1
         return None
 
     def check_king_mouse_slip(
