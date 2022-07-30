@@ -5,11 +5,13 @@ import uvicorn
 
 from wild_chess.server.routes import authentication
 from wild_chess.server.routes import leaderboard
+from wild_chess.server.routes import multiplayer
 
 app = fastapi.FastAPI()
 
 app.include_router(authentication.route)
 app.include_router(leaderboard.route)
+app.include_router(multiplayer.route)
 
 
 def main() -> None:
