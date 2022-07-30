@@ -45,12 +45,13 @@ class ChessPiece:
         :rtype: list[tuple[int, int]]
         """
         positions = []
-        blacklist = []
+        # blacklist = []
 
         def check(x: int, y: int) -> bool:
             point = board[x][y]
             dx = abs(x - self.position[0])
             dy = abs(y - self.position[1])
+            '''
             nearby_positions = [(x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1), (x - 1, y - 1)]
             near = [p for p in nearby_positions if 0 <= p[0] < 8 and 0 <= p[1] < 8]
             for p in near:
@@ -59,11 +60,12 @@ class ChessPiece:
                 if p in blacklist and d1x == d1y and d1x > 0:
                     blacklist.append(p)
                     return True
+            '''
             if (dx == dy) and (dx > 0):
                 positions.append((x, y))
             if point and point.color != self.color and (dx == dy) and (dx > 0):
                 positions.append((x, y))
-                blacklist.append((x, y))
+                # blacklist.append((x, y))
                 return True
             return False
 
@@ -106,26 +108,34 @@ class ChessPiece:
         for i in range(self.position[0] + 1, 8):
             point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
+            '''
             if point and point.color != self.color:
                 break
+            '''
 
         for i in range(self.position[0] - 1, -1, -1):
             point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
+            '''
             if point and point.color != self.color:
                 break
+            '''
 
         for i in range(self.position[1] + 1, 8):
             point = board[self.position[0]][i]
             positions.append((self.position[0], i))
+            '''
             if point and point.color != self.color:
                 break
+            '''
 
         for i in range(self.position[1] - 1, -1, -1):
             point = board[self.position[0]][i]
             positions.append((self.position[0], i))
+            '''
             if point and point.color != self.color:
                 break
+            '''
 
         return positions
 
