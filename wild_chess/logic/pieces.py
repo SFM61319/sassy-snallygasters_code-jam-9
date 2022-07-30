@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import random
 import typing
 
 
@@ -106,7 +107,7 @@ class ChessPiece:
         """
         positions = []
         for i in range(self.position[0] + 1, 8):
-            point = board[i][self.position[1]]
+            # point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
             '''
             if point and point.color != self.color:
@@ -114,7 +115,7 @@ class ChessPiece:
             '''
 
         for i in range(self.position[0] - 1, -1, -1):
-            point = board[i][self.position[1]]
+            # point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
             '''
             if point and point.color != self.color:
@@ -122,7 +123,7 @@ class ChessPiece:
             '''
 
         for i in range(self.position[1] + 1, 8):
-            point = board[self.position[0]][i]
+            # point = board[self.position[0]][i]
             positions.append((self.position[0], i))
             '''
             if point and point.color != self.color:
@@ -130,7 +131,7 @@ class ChessPiece:
             '''
 
         for i in range(self.position[1] - 1, -1, -1):
-            point = board[self.position[0]][i]
+            # point = board[self.position[0]][i]
             positions.append((self.position[0], i))
             '''
             if point and point.color != self.color:
@@ -361,3 +362,52 @@ class King(ChessPiece):
         self.possibility.append((self.position[0], self.position[1] - 1))
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
+
+
+class WildPiece(ChessPiece):
+
+    def __init__(self, piece: ChessPiece, board: list[list[ChessPiece | None]]) -> None:
+        super().__init__(piece.position, piece.player, piece.color)
+        self.image = piece.image
+        self.choices: list[list[tuple[int, int]]] = []
+        self.board = board
+
+    @property
+    def queen_moves(self) -> list[tuple[int, int]]:
+        piece = Queen(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def rook_moves(self) -> list[tuple[int, int]]:
+        piece = Rook(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def bishop_moves(self) -> list[tuple[int, int]]:
+        piece = Bishop(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def knight_moves(self) -> list[tuple[int, int]]:
+        piece = Knight(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def king_moves(self) -> list[tuple[int, int]]:
+        piece = King(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def pawn_moves(self) -> list[tuple[int, int]]:
+        piece = Pawn(self.position, self.player, self.color)
+        return piece.possible_moves(self.board)
+
+    @property
+    def random_moves(self) -> list[tuple[int, int]]:
+        self.choices.append(self.queen_moves)
+        self.choices.append(self.rook_moves)
+        self.choices.append(self.bishop_moves)
+        self.choices.append(self.knight_moves)
+        self.choices.append(self.king_moves)
+        self.choices.append(self.pawn_moves)
+        return random.choice(self.choices)
