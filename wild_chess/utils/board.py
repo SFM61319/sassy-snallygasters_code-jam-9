@@ -4,6 +4,7 @@
 import random
 import typing
 
+from wild_chess.gui import gui
 from wild_chess.logic import pieces
 from wild_chess.utils import data
 
@@ -28,6 +29,7 @@ class Board:
         self.player1 = data.PlayerAttributes(player1, "white")
         self.player2 = data.PlayerAttributes(player2, "black")
         self.current_player = self.player1
+        self.game = gui.Game()
 
     # TODO: Refactor this method
     def generate_pieces(self, player1: data.PlayerAttributes, player2: data.PlayerAttributes) -> None:
@@ -139,32 +141,12 @@ class Board:
                     return old[0], old[1] + 1
         return None
 
-    def start(self) -> None:
+    @staticmethod
+    def start(player1: str, player2: str) -> "Board":
+        board = Board(player1, player2)
+        board.begin()
+        return board
+
+    def begin(self) -> None:
         self.generate_pieces(self.player1, self.player2)
-        checkmate = False
-        while not checkmate:
-            # self.print_board() display board
-            self.current_player = self.player1 if self.current_player == self.player2 else self.player2
-            print(f"{self.current_player.name}'s turn")
-            # old, new = self.get_move() ask move return old pos and new pos
-            old = (0, 0)
-            new = (0, 0)
-            en_passant = self.check_en_passant(self.current_player, old, new)
-            if en_passant:
-                print("En passant")
-            if self.check_check(self.current_player):
-                dummy = self.board.copy()
-                dummy[old[0]][old[1]].move(new, self.board, en_passant)
-                if self.check_check(self.current_player, dummy):
-                    print("Check")  # check if the move is valid
-                print("Check")
-            if self.check_checkmate(self.current_player):
-                print("Checkmate")
-                checkmate = True
-            self.board[old[0]][old[1]].move(new, self.board, en_passant)
-            # self.print_board() display board again
-            if self.check_checkmate(self.current_player):
-                print("Checkmate")
-                checkmate = True
-            # repeat till over
-            # rough logic
+        self.game.init(self.board, self.player1, self.player2)

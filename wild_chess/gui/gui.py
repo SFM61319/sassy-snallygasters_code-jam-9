@@ -6,6 +6,7 @@ import typing
 
 import pygame
 
+from wild_chess.utils.data import PlayerAttributes
 from wild_chess.logic import pieces
 
 # import board_backend
@@ -176,7 +177,7 @@ class Game:
             return True
         return False
 
-    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:  # noqa: C901
+    def init(self, board: list[list[pieces.ChessPiece | None]], player1: PlayerAttributes, player2: PlayerAttributes) -> None:  # noqa: C901
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -261,7 +262,7 @@ class Game:
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
                 self.__draw_text(
-                    "P1 VS P2", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
+                    f"{player1.name} vs {player2.name}", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
                 )
 
                 if self.window_width != current_width or self.window_height != current_height:
