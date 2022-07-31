@@ -99,7 +99,8 @@ class Game:
                         ),
                     )
 
-    def __move_piece(self, initial: tuple, final: tuple, board: list[list[pieces.ChessPiece | None]]) -> None:
+    @staticmethod
+    def __move_piece(initial: tuple, final: tuple, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Move piece to new position"""
         board[initial[0]][initial[1]].move(final, board)
 
@@ -139,16 +140,16 @@ class Game:
             and self.board_dfe <= mouse_y <= self.board_dfe + self.board_height
         ):
             column_grid = (mouse_x - (self.board_dfe + self.window_width // 2 - self.window_height // 2)) // self.square_size
-            row_grid = (mouse_y - (self.board_dfe)) // self.square_size
+            row_grid = (mouse_y - self.board_dfe) // self.square_size
             if 0 <= column_grid < self.SQUARES and 0 <= row_grid < self.SQUARES:
-                return (column_grid, row_grid)
+                return column_grid, row_grid
             return None
         return None
 
     def __moves_highlight(self, possibles: list[tuple[int, int]], board: list[list[pieces.ChessPiece | None]]) -> None:
         """Function to highlight the possible squares"""
         move_colors = ["#67f757", "#f75757"]  # Green, Red
-        current_color = move_colors[0]
+        # current_color = move_colors[0]
         for possible in possibles:
             if board[possible[1]][possible[0]] is None:
                 current_color = move_colors[0]
@@ -260,7 +261,7 @@ class Game:
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
                 self.__draw_text(
-                    "P1 VS P2", 30, ((self.window_width // 2, (self.board_dfe * 2) + self.board_height)), (255, 255, 255)
+                    "P1 VS P2", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
                 )
 
                 if self.window_width != current_width or self.window_height != current_height:
