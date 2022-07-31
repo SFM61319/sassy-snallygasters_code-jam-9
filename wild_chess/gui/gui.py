@@ -102,29 +102,7 @@ class Game:
 
     def __move_piece(self, initial: tuple, final: tuple, board: list[list[pieces.ChessPiece]]) -> None:
         """Move piece to new position"""
-        square_colors = ["#DFDFDF", "#202020"]
-        overlap_color = square_colors[(initial[0] + initial[1]) % 2]
-        pygame.draw.rect(
-            self.screen,
-            overlap_color,
-            pygame.Rect(
-                self.board_dfe + self.window_width / 2 - self.window_height / 2 + (initial[0] * self.square_size),
-                self.board_dfe + (initial[1] * self.square_size),
-                self.square_size,
-                self.square_size,
-            ),
-        )
-        piece = self.images[f"{board[initial[1]][initial[0]].piece_type.lower()}.{board[initial[1]][initial[0]].color}"]
-        piece = pygame.transform.scale(piece, (self.square_size, self.square_size))
-        self.screen.blit(
-            piece,
-            (
-                self.board_dfe + self.window_width / 2 - self.window_height / 2 + (final[0] * self.square_size),
-                self.board_dfe + (final[1] * self.square_size),
-            ),
-        )
-        board[final[1]][final[0]] = board[initial[1]][initial[0]]
-        board[initial[1]][initial[0]] = None
+        board[initial[0]][initial[1]].move(final, board)
 
     def __draw_text(self, text: str, font_size: int, position: tuple, color: tuple) -> None:
         """Draw text in window"""
@@ -243,7 +221,7 @@ class Game:
                                 piece_active = True
 
                             elif piece_active is True and grid in possible_moves and piece_selected != grid:
-                                self.__move_piece(piece_selected, grid, board)
+                                self.__move_piece((piece_selected [1],piece_selected[0]), (grid[1],grid[0]), board)
                                 self.__draw_board()
                                 self.__draw_pieces(board)
                                 piece_selected = ()
