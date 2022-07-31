@@ -1,6 +1,5 @@
 """Pygame GUI"""
 # pylint: disable=R0902, R0914, R1702, R0912, R0915, fixme
-# type: ignore
 
 import pathlib
 import typing
@@ -90,8 +89,8 @@ class Game:
                 if board[row][column] is not None:
                     if not self.images:
                         self.__load_images()
-                    image = self.images[f"{board[row][column].piece_type.lower()}.{board[row][column].color}"]
-                    image = pygame.transform.scale(image, (self.square_size, self.square_size))
+                    image = self.images[f"{board[row][column].piece_type.lower()}.{board[row][column].color}"]  # type: ignore
+                    image = pygame.transform.scale(image, (self.square_size, self.square_size))              # type: ignore
                     self.screen.blit(
                         image,
                         (
@@ -104,7 +103,7 @@ class Game:
         """Move piece to new position"""
         board[initial[0]][initial[1]].move(final, board)
 
-    def __draw_text(self, text: str, font_size: int, position: tuple, color: tuple) -> None:
+    def __draw_text(self, text: str, font_size: int, position: tuple, color: tuple[int, int, int]) -> None:
         """Draw text in window"""
         font = pygame.font.SysFont("Times New Roman", font_size)
 
@@ -118,7 +117,7 @@ class Game:
         self.__draw_board()
         self.__moves_highlight(possibles, board)
 
-    def __draw_button(self, color: tuple) -> None:
+    def __draw_button(self, color: tuple[int, int, int]) -> None:
         """Draws button on main menu"""
         pygame.draw.rect(
             self.screen,
@@ -214,7 +213,7 @@ class Game:
 
                             if piece_active is False and board[grid_y][grid_x] is not None:
                                 piece_selected = grid
-                                possible_moves = board[grid_y][grid_x].possible_moves(board)
+                                possible_moves = board[grid_y][grid_x].possible_moves(board)  # type: ignore
                                 possible_moves = [m[::-1] for m in possible_moves]
                                 self.__update(possible_moves, board)
                                 self.__draw_pieces(board)
@@ -226,19 +225,19 @@ class Game:
                                 self.__draw_pieces(board)
                                 piece_selected = ()
                                 piece_active = False
-                                possible_moves = ()
+                                possible_moves = []
 
                             elif piece_active is True and grid not in possible_moves:
                                 self.__draw_board()
                                 self.__draw_pieces(board)
                                 piece_selected = ()
                                 piece_active = False
-                                possible_moves = ()
+                                possible_moves = []
 
                             else:
                                 piece_selected = ()
                                 piece_active = False
-                                possible_moves = ()
+                                possible_moves = []
                                 self.__draw_board()
                                 self.__draw_pieces(board)
 

@@ -13,7 +13,7 @@ class ChessPiece:
     piece_type: str
     PATH: typing.Final[str] = "wild_chess/assets/img/chess_pieces"
     color: str
-    possible_moves: typing.Callable[[list[list[ChessPiece]]], list[tuple[int, int]]]
+    possible_moves: typing.Callable[[typing.Any, list[list[ChessPiece | None]]], list[tuple[int, int]]]
     image: str
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
@@ -36,7 +36,7 @@ class ChessPiece:
             board[en_passant[0]][en_passant[1]] = None
         self.position = new_position
 
-    def find_diagonals(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def find_diagonals(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """
         Finds diagonals.
 
@@ -96,12 +96,12 @@ class ChessPiece:
 
         return positions
 
-    def find_sides(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:  # pylint: disable=unused-argument
+    def find_sides(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:  # pylint: disable=unused-argument
         """
         Finds sides.
 
         :param board:
-        :type board: list[list[ChessPiece]]
+        :type board: list[list[ChessPiece | None]]
         :return:
         :rtype: list[tuple[int, int]]
         """
@@ -141,14 +141,14 @@ class ChessPiece:
         return positions
 
     @staticmethod
-    def filter_moves(possibility: list[tuple[int, int]], board: list[list[ChessPiece]], player: str) -> list[tuple[int, int]]:
+    def filter_moves(possibility: list[tuple[int, int]], board: list[list[ChessPiece | None]], player: str) -> list[tuple[int, int]]:
         """
         Filter the moves to only those that are valid.
 
         :param possibility:
         :type possibility: list[tuple[int, int]]
         :param board:
-        :type board: list[list[ChessPiece]]
+        :type board: list[list[ChessPiece | None]]
         :param player:
         :type player: list[tuple[int, int]]
         :return:
@@ -161,7 +161,7 @@ class ChessPiece:
             if board[move[0]][move[1]] is None:
                 moves.append(move)
 
-            elif board[move[0]][move[1]].player != player:
+            elif board[move[0]][move[1]].player != player:  # type: ignore
                 moves.append(move)
 
         return moves
@@ -180,7 +180,7 @@ class Pawn(ChessPiece):
         self.moves: list[tuple[int, int]] = []
 
     # TODO: Heavily refactor and clean this method, and the whole file
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the pawn."""
         self.possibility = []
         a = (self.position[0], self.position[1])
@@ -194,11 +194,11 @@ class Pawn(ChessPiece):
                 self.possibility.append((a[0] + 1, a[1]))
 
             x = (a[0] + 1, a[1] + 1)
-            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:  # type: ignore
                 self.possibility.append(x)
 
             x = (a[0] + 1, a[1] - 1)
-            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:  # type: ignore
                 self.possibility.append(x)
 
             self.possibility.append(x)
@@ -219,11 +219,11 @@ class Pawn(ChessPiece):
                 self.possibility.append((a[0] - 1, a[1]))
 
             x = (a[0] - 1, a[1] - 1)
-            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:  # type: ignore
                 self.possibility.append(x)
 
             x = (a[0] - 1, a[1] + 1)
-            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
+            if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:  # type: ignore
                 self.possibility.append(x)
 
             y = board[a[0]][a[1] - 1]
@@ -266,7 +266,7 @@ class Rook(ChessPiece):
         self.possibility: list[tuple[int, int]] = []
         self.moves: list[tuple[int, int]] = []
 
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the rook."""
         self.possibility = []
         self.possibility.extend(self.find_sides(board))
@@ -286,7 +286,7 @@ class Knight(ChessPiece):
         self.possibility: list[tuple[int, int]] = []
         self.moves: list[tuple[int, int]] = []
 
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the knight."""
         self.possibility = []
         self.possibility.append((self.position[0] + 2, self.position[1] + 1))
@@ -313,7 +313,7 @@ class Bishop(ChessPiece):
         self.possibility: list[tuple[int, int]] = []
         self.moves: list[tuple[int, int]] = []
 
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the bishop."""
         self.possibility = []
         self.possibility.extend(self.find_diagonals(board))
@@ -333,7 +333,7 @@ class Queen(ChessPiece):
         self.possibility: list[tuple[int, int]] = []
         self.moves: list[tuple[int, int]] = []
 
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the queen."""
         self.possibility = []
         self.possibility.extend(self.find_sides(board))
@@ -354,7 +354,7 @@ class King(ChessPiece):
         self.possibility: list[tuple[int, int]] = []
         self.moves: list[tuple[int, int]] = []
 
-    def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def possible_moves(self, board: list[list[ChessPiece | None]]) -> list[tuple[int, int]]:
         """Get the possible moves for the king."""
         self.possibility = []
         self.possibility.append((self.position[0] + 1, self.position[1] + 1))

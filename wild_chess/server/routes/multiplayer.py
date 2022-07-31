@@ -2,9 +2,18 @@
 
 from fastapi import APIRouter
 from random import shuffle
+from ...logic import pieces
+import typing as t
+
+
+class Info(t.TypedDict):
+    code: str
+    board: t.Optional[t.List[t.List[t.Optional[pieces.ChessPiece]]]]
+    players: list[str]
+
 
 route = APIRouter()
-active_game = {}
+active_game: t.Dict[str, Info] = {}
 
 
 @route.post('/host-game')
@@ -15,8 +24,8 @@ async def host_game(username: str) -> dict:
     """
     code: list[str] = [str(i) for i in range(10)]
     shuffle(code)
-    code: str = "".join(code)
-    active_game[username] = {'code': code, 'board': None, 'players': [username]}
+    shuffled: str = "".join(code)
+    active_game[username] = {'code': shuffled, 'board': None, 'players': [username]}
     return {'code': code}
 
 
@@ -37,7 +46,7 @@ async def join_game(code: str, username: str) -> dict:
 
 
 @route.post('/game/{code}')
-async def post_game(code: str, username: str, board) -> dict:
+async def post_game(code: str, username: str, board: list[list[pieces.ChessPiece | None]]) -> dict:
     """
     :param code:
     :param username:
