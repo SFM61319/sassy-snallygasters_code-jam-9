@@ -215,7 +215,7 @@ class Game:
         en_passant = base.check_en_passant(base.current_player, old, new)
         if en_passant:
             print("En passant")
-        if base.check_check(base.current_player, new):
+        if base.check_check(base.current_player):
             print("Check")
             if base.check_checkmate(base.current_player, new):
                 print("Checkmate")
