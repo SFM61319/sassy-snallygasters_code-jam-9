@@ -30,6 +30,8 @@ class Board:
         self.player2 = data.PlayerAttributes(player2, "black")
         self.current_player = self.player1
         self.game = gui.Game()
+        self.turns = {}
+        self.total_turns: int = 0
 
     # TODO: Refactor this method
     def generate_pieces(self, player1: data.PlayerAttributes, player2: data.PlayerAttributes) -> None:
@@ -149,4 +151,5 @@ class Board:
 
     def begin(self) -> None:
         self.generate_pieces(self.player1, self.player2)
-        self.game.init(self.board, self.player1, self.player2)
+        self.turns['board'] = self.board
+        self.game.init(self)
