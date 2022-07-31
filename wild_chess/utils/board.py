@@ -14,6 +14,10 @@ class Board:
     """A chess board."""
 
     board: list[list[typing.Optional[pieces.ChessPiece]]]
+    player1: data.PlayerAttributes
+    player2: data.PlayerAttributes
+    current_player: data.PlayerAttributes
+    turns: dict[str, list[list[typing.Optional[pieces.ChessPiece]]]]
 
     def __init__(self, player1: str, player2: str) -> None:
         self.board = [
@@ -33,7 +37,6 @@ class Board:
         self.turns = {}
         self.total_turns: int = 0
 
-    # TODO: Refactor this method
     def generate_pieces(self, player1: data.PlayerAttributes, player2: data.PlayerAttributes) -> None:
         """
         Generate the pieces for the board.
@@ -42,7 +45,7 @@ class Board:
         :param player2:
         :return:
         """
-        all_special_pieces: list[typing.Callable[[tuple[int, int], str, str], pieces.ChessPiece]] = [
+        all_special_pieces: list[type[pieces.ChessPiece]] = [
             pieces.Rook,
             pieces.Knight,
             pieces.Bishop,
@@ -112,7 +115,11 @@ class Board:
         return False
 
     def check_en_passant(
-        self, player: data.PlayerAttributes, old: typing.Tuple[int, int], new: typing.Tuple[int, int], board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None
+        self,
+        player: data.PlayerAttributes,
+        old: typing.Tuple[int, int],
+        new: typing.Tuple[int, int],
+        board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None,
     ) -> tuple[int, int] | None:
         """
         Check if the player is in el passant.
@@ -145,11 +152,21 @@ class Board:
 
     @staticmethod
     def start(player1: str, player2: str) -> None:
+        """
+        Start the game.
+
+        :param player1:
+        :type player1: str
+        :param player2:
+        :type player2: str
+        :return:
+        :rtype: Board
+        """
         board = Board(player1, player2)
-        result = board.begin()
-        return result
+        board.begin()
 
     def begin(self) -> None:
+        """Begin the game."""
         self.generate_pieces(self.player1, self.player2)
-        self.turns['board'] = self.board
+        self.turns["board"] = self.board
         self.game.init(self)
