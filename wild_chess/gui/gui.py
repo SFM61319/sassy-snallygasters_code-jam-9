@@ -151,7 +151,6 @@ class Game:
         move_colors = ["#67f757", "#f75757"]  # Green, Red
         current_color = move_colors[0]
         for possible in possibles:
-            possible = (possible[1], possible[0])
             if board[possible[1]][possible[0]] is None:
                 current_color = move_colors[0]
             else:
@@ -216,12 +215,13 @@ class Game:
                             if piece_active is False and board[grid_y][grid_x] is not None:
                                 piece_selected = grid
                                 possible_moves = board[grid_y][grid_x].possible_moves(board)
+                                possible_moves = [m[::-1] for m in possible_moves]
                                 self.__update(possible_moves, board)
                                 self.__draw_pieces(board)
                                 piece_active = True
 
-                            elif piece_active is True and grid in possible_moves and piece_selected != grid:
-                                self.__move_piece((piece_selected [1],piece_selected[0]), (grid[1],grid[0]), board)
+                            elif piece_active is True and grid in possible_moves and piece_selected[::-1] != grid:
+                                self.__move_piece((piece_selected[::-1]), (grid[::-1]), board)
                                 self.__draw_board()
                                 self.__draw_pieces(board)
                                 piece_selected = ()
