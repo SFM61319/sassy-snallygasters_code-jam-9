@@ -9,7 +9,7 @@ def host_game(username: str) -> dict:
     :param username:
     :return:
     """
-    return request.post(f'{url}/host-game?username={username}').json()
+    return requests.post(f'{url}/host-game?username={username}').json()
 
 
 def join_game(code: str, username: str) -> dict:
