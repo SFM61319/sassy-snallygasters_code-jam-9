@@ -32,7 +32,7 @@ def get_board(code: str, username: str) -> dict:
     return requests.get(f"{url}/game/{code}?username={username}").json()
 
 
-def post_board(code: str, username: str, board: list) -> dict:
+def post_board(code: str, username: str, board: dict) -> dict:
     """
     :param code:
     :param username:
