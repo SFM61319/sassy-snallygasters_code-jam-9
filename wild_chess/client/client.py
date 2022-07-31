@@ -1,15 +1,17 @@
 """client functions"""
 
+
 import requests
 
-url = 'http://127.0.0.1:8000'
+url = "http://127.0.0.1:8000"
+
 
 def host_game(username: str) -> dict:
     """
     :param username:
     :return:
     """
-    return requests.post(f'{url}/host-game?username={username}').json()
+    return requests.post(f"{url}/host-game?username={username}").json()
 
 
 def join_game(code: str, username: str) -> dict:
@@ -18,7 +20,7 @@ def join_game(code: str, username: str) -> dict:
     :param username:
     :return:
     """
-    return requests.post(f'{url}/join-game/{code}?username={username}').json()
+    return requests.post(f"{url}/join-game/{code}?username={username}").json()
 
 
 def get_board(code: str, username: str) -> dict:
@@ -27,7 +29,7 @@ def get_board(code: str, username: str) -> dict:
     :param username:
     :return:
     """
-    return requests.get(f'{url}/game/{code}?username={username}').json()
+    return requests.get(f"{url}/game/{code}?username={username}").json()
 
 
 def post_board(code: str, username: str, board: list) -> dict:
@@ -37,4 +39,4 @@ def post_board(code: str, username: str, board: list) -> dict:
     :param board:
     :return:
     """
-    return requests.post(f'{url}/game/{code}?username={username}&board={board}').json()
+    return requests.post(f"{url}/game/{code}?username={username}&board={board}").json()
