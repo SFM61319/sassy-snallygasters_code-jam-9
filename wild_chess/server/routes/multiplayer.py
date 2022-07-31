@@ -46,7 +46,7 @@ async def join_game(code: str, username: str) -> dict:
 
 
 @route.post('/game/{code}')
-async def post_game(code: str, username: str, board: list[list[pieces.ChessPiece | None]]) -> dict:
+async def post_game(code: str, username: str, board: str) -> dict:
     """
     :param code:
     :param username:
