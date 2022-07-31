@@ -34,4 +34,4 @@ The pieces are jumbled, their purpose unknown. This is a game of strategy, of wa
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/SFM61319/sassy-snallygasters_code-jam-9/blob/main/LICENSE)
