@@ -6,8 +6,9 @@ import typing
 
 import pygame
 
+from wild_chess.utils.board import Board
 from wild_chess.logic import pieces
-
+from wild_chess.server.routes.multiplayer import active_game
 # import board_backend
 
 
@@ -207,7 +208,7 @@ class Game:
             ),
         )
 
-    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:  # noqa: C901
+    def init(self, base: Board) -> None:  # noqa: C901
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -219,8 +220,10 @@ class Game:
         self.screen.fill("#202020")  # Filling only at beginning for code efficiency
         if not menu:
             self.__draw_board()
-            self.__draw_pieces(board)
-
+            self.__draw_pieces(base.board)
+        text_board = lambda x: [(j.piece_type, j.color) if j else ' ' for i in x for j in i]
+        active_game[(base.player1.name, base.player2.name)] = [text_board(base.board)[i:i+8] for i in range(0, len(text_board(base.board)), 8)]
+        current_player = base.current_player
         running = True
         piece_active = False  # Piece is selected
         box_active = False  # Text Box is Active
@@ -240,7 +243,7 @@ class Game:
                         if self.__on_button(mouse_x, mouse_y):
                             menu = False
                             self.__draw_board()
-                            self.__draw_pieces(board)
+                            self.__draw_pieces(base.board)
                         elif self.__on_textbox(mouse_x, mouse_y):
                             if box_active:
                                 box_active = False
@@ -251,25 +254,32 @@ class Game:
                         grid = self.__board_grid_detection(mouse_x, mouse_y)
                         if grid is not None:
                             grid_x, grid_y = grid[0], grid[1]
-                            if piece_active is False and board[grid_y][grid_x] is not None:
+                            if piece_active is False and base.board[grid_y][grid_x] is not None:
                                 piece_selected = grid
                                 possible_moves = board[grid_y][grid_x].possible_moves(board)  # type: ignore
                                 possible_moves = [m[::-1] for m in possible_moves]
-                                self.__update(possible_moves, board)
-                                self.__draw_pieces(board)
+                                self.__update(possible_moves, base.board)
+                                self.__draw_pieces(base.board)
                                 piece_active = True
 
                             elif piece_active is True and grid in possible_moves and piece_selected[::-1] != grid:
-                                self.__move_piece((piece_selected[::-1]), (grid[::-1]), board)
+                                self.__move_piece((piece_selected[::-1]), (grid[::-1]), base.board)
                                 self.__draw_board()
-                                self.__draw_pieces(board)
+                                self.__draw_pieces(base.board)
+                                base.turns[base.total_turns] = {current_player.name: (piece_selected[::-1], grid[::-1], current_player.color)}
+                                base.total_turns += 1
+                                if current_player == base.player1:
+                                    current_player = base.player2
+                                else:
+                                    current_player = base.player1
+                                active_game[(base.player1.name, base.player2.name)] = [text_board(base.board)[i:i+8] for i in range(0, len(text_board(base.board)), 8)]
                                 piece_selected = ()
                                 piece_active = False
                                 possible_moves = []
 
                             elif piece_active is True and grid not in possible_moves:
                                 self.__draw_board()
-                                self.__draw_pieces(board)
+                                self.__draw_pieces(base.board)
                                 piece_selected = ()
                                 piece_active = False
                                 possible_moves = []
@@ -279,7 +289,7 @@ class Game:
                                 piece_active = False
                                 possible_moves = []
                                 self.__draw_board()
-                                self.__draw_pieces(board)
+                                self.__draw_pieces(base.board)
 
                         else:
                             continue
@@ -329,13 +339,13 @@ class Game:
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
                 self.__draw_text(
-                    "P1 VS P2", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
+                    f"⚪{base.player1.name} vs {base.player2.name}⚫", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
                 )
 
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
                     self.__draw_board()
-                    self.__draw_pieces(board)
+                    self.__draw_pieces(base.board)
 
             clock.tick(self.FPS)
             pygame.display.flip()
