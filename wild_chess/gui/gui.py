@@ -6,7 +6,6 @@ import typing
 
 import pygame
 
-from wild_chess.utils.board import Board
 from wild_chess.logic import pieces
 from wild_chess.server.routes.multiplayer import active_game
 # import board_backend
@@ -208,7 +207,7 @@ class Game:
             ),
         )
 
-    def init(self, base: Board) -> None:  # noqa: C901
+    def init(self, base) -> None:  # noqa: C901
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -256,7 +255,7 @@ class Game:
                             grid_x, grid_y = grid[0], grid[1]
                             if piece_active is False and base.board[grid_y][grid_x] is not None:
                                 piece_selected = grid
-                                possible_moves = board[grid_y][grid_x].possible_moves(board)  # type: ignore
+                                possible_moves = base.board[grid_y][grid_x].possible_moves(base.board)  # type: ignore
                                 possible_moves = [m[::-1] for m in possible_moves]
                                 self.__update(possible_moves, base.board)
                                 self.__draw_pieces(base.board)

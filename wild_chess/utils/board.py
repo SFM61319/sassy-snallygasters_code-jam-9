@@ -144,10 +144,10 @@ class Board:
         return None
 
     @staticmethod
-    def start(player1: str, player2: str) -> "Board":
+    def start(player1: str, player2: str) -> None:
         board = Board(player1, player2)
-        board.begin()
-        return board
+        result = board.begin()
+        return result
 
     def begin(self) -> None:
         self.generate_pieces(self.player1, self.player2)
