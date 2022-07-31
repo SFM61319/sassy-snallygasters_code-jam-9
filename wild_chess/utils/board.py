@@ -66,8 +66,7 @@ class Board:
             self.board[6][i] = random_piece((6, i), player2.name, player2.color)
 
     def check_check(
-        self, player: data.PlayerAttributes, board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None
-    ) -> bool:
+        self, player: data.PlayerAttributes) -> bool:
         """
         Check if the player is in check.
 
@@ -75,15 +74,15 @@ class Board:
         :param board:
         :return:
         """
-        if board is None:
-            board = self.board
-        colors = ["white", "black"]
-        colors.remove(player.color)
-        player_king = set([j.position for i in board for j in i if isinstance(j, pieces.King) and j.color == player.color][0])
-        opponent_pieces = [j for i in board for j in i if j and j.color == colors[0]]
-        moves = set([j.possible_moves(board, True) for j in opponent_pieces])
-        if player_king & moves:
-            return True
+        board = self.board
+        enemy_pieces = [j for i in self.board for j in i if j and j.color != player.color]
+        for piece in enemy_pieces:
+            for move in piece.possible_moves(board):
+                try:
+                    if board[move[0]][move[1]].piece_type == "King":
+                        return True
+                except:
+                    pass
         return False
 
     def check_checkmate(self, player: data.PlayerAttributes) -> bool:
@@ -93,26 +92,11 @@ class Board:
         :param player:
         :return:
         """
-        if self.check_check(player):
-            dummy_board = self.board.copy()
-            player_pieces = [j for i in self.board for j in i if j and j.color == player.color]
-            for i in player_pieces:
-                for j in i.possible_moves(dummy_board):
-                    piece = None
-                    en_passant = self.check_en_passant(player, i.position, j, dummy_board)
-                    dummy_board[j[0]][j[1]] = i
-                    dummy_board[i.position[0]][i.position[1]] = None
-                    if en_passant:
-                        piece = dummy_board[en_passant[0]][en_passant[1]]
-                        dummy_board[en_passant[0]][en_passant[1]] = None
-                    if not self.check_check(player, dummy_board):
-                        return False
-                    dummy_board[i.position[0]][i.position[1]] = i
-                    dummy_board[j[0]][j[1]] = None
-                    if en_passant:
-                        dummy_board[en_passant[0]][en_passant[1]] = piece
-            return True
-        return False
+        player_pieces = [j for i in self.board for j in i if j and j.color == player.color]
+        for piece in player_pieces:
+            if piece.piece_type == "King":
+                return False
+        return True
 
     def check_en_passant(
         self,
