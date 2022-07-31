@@ -6,8 +6,6 @@ import typing
 
 import pygame
 
-from wild_chess.utils.board import Board
-from wild_chess.utils.data import PlayerAttributes
 from wild_chess.logic import pieces
 
 # import board_backend
@@ -92,7 +90,7 @@ class Game:
                     if not self.images:
                         self.__load_images()
                     image = self.images[f"{board[row][column].piece_type.lower()}.{board[row][column].color}"]  # type: ignore
-                    image = pygame.transform.scale(image, (self.square_size, self.square_size))              # type: ignore
+                    image = pygame.transform.scale(image, (self.square_size, self.square_size))  # type: ignore
                     self.screen.blit(
                         image,
                         (
@@ -126,10 +124,10 @@ class Game:
             self.screen,
             color,
             pygame.Rect(
-                self.window_width / 2 - self.window_width / 12,
-                self.window_height / 2 - self.window_height / 24,
-                self.window_width / 6,
-                self.window_height / 12,
+                self.window_width / 2 + self.window_width / 12,  # X_Position
+                self.window_height / 2 + self.window_height / 24,  # Y_Position
+                self.window_width / 12,
+                self.window_height / 24,
             ),
         )
 
@@ -172,29 +170,61 @@ class Game:
     def __on_button(self, mouse_x: int, mouse_y: int) -> bool:
         """Check if mouse is on the "ENTER" button in the menu"""
         if (
-            self.window_width / 2 - self.window_width / 12 <= mouse_x <= self.window_width / 2 + self.window_width / 12
-            and self.window_height / 2 - self.window_height / 24 <= mouse_y <= self.window_height / 2 + self.window_height / 24
+            self.window_width / 2 + self.window_width / 8 - self.window_width / 24
+            <= mouse_x
+            <= self.window_width / 2 + self.window_width / 8 + self.window_width / 24
+            and self.window_height / 2 + self.window_height / 17 - self.window_height / 48
+            <= mouse_y
+            <= self.window_height / 2 + self.window_height / 17 + self.window_height / 48
         ):
             return True
         return False
 
-    def init(self, base: Board) -> None:  # noqa: C901
+    def __on_textbox(self, mouse_x: int, mouse_y: int) -> bool:
+        """Check if mouse is on the textbox"""
+        if (
+            self.window_width / 2 - self.window_width / 6 <= mouse_x <= self.window_width / 2 + self.window_width / 6
+            and self.window_height / 2 - self.window_height / 48 + self.window_height / 16
+            <= mouse_y
+            <= self.window_height / 2 + self.window_height / 48 + self.window_height / 16
+        ):
+            return True
+        return False
+
+    def __draw_textbox(self, awake: bool) -> None:
+        color = "#b3b3b3"
+        if awake:
+            color = "#d9d9d9"
+
+        pygame.draw.rect(
+            self.screen,
+            color,
+            pygame.Rect(
+                self.window_width / 2 - self.window_width / 6,  # X_Position
+                self.window_height / 2 + self.window_height / 24,  # Y_Position
+                self.window_width / 4,
+                self.window_height / 24,
+            ),
+        )
+
+    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:  # noqa: C901
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
         self.screen = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
         clock = pygame.time.Clock()
         menu = True
-        current_player = base.current_player
 
         self.__load_images()  # load images of chess pieces only once
         self.screen.fill("#202020")  # Filling only at beginning for code efficiency
         if not menu:
             self.__draw_board()
-            self.__draw_pieces(base.board)
+            self.__draw_pieces(board)
 
         running = True
         piece_active = False  # Piece is selected
+        box_active = False  # Text Box is Active
+        game_code = ""  # Game Code from textbox
         piece_selected: tuple[int, int] = ()  # Current position of selected piece
         possible_moves: list[tuple[int, int]] = []  # Possible moves for the selected piece
         while running:
@@ -203,43 +233,43 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                # Add checkmate detection here or in server
 
                 elif event.type == pygame.MOUSEBUTTONUP:
-                    if menu and self.__on_button:
-                        menu = False
-                        self.__draw_board()
-                        self.__draw_pieces(base.board)
+                    if menu:
+                        if self.__on_button(mouse_x, mouse_y):
+                            menu = False
+                            self.__draw_board()
+                            self.__draw_pieces(board)
+                        elif self.__on_textbox(mouse_x, mouse_y):
+                            if box_active:
+                                box_active = False
+                            else:
+                                box_active = True
 
                     elif not menu:
                         grid = self.__board_grid_detection(mouse_x, mouse_y)
                         if grid is not None:
                             grid_x, grid_y = grid[0], grid[1]
-
-                            if piece_active is False and base.board[grid_y][grid_x] is not None:
+                            if piece_active is False and board[grid_y][grid_x] is not None:
                                 piece_selected = grid
                                 possible_moves = board[grid_y][grid_x].possible_moves(board)  # type: ignore
                                 possible_moves = [m[::-1] for m in possible_moves]
-                                self.__update(possible_moves, base.board)
-                                self.__draw_pieces(base.board)
+                                self.__update(possible_moves, board)
+                                self.__draw_pieces(board)
                                 piece_active = True
 
                             elif piece_active is True and grid in possible_moves and piece_selected[::-1] != grid:
-                                self.__move_piece((piece_selected[::-1]), (grid[::-1]), base.board)
+                                self.__move_piece((piece_selected[::-1]), (grid[::-1]), board)
                                 self.__draw_board()
-                                self.__draw_pieces(base.board)
-                                base.turns[base.total_turns] = {current_player: [(piece_selected[::-1]), (grid[::-1]), current_player.color]}
-                                base.total_turns += 1
-                                if current_player == base.player1:
-                                    current_player = base.player2
-                                else:
-                                    current_player = base.player1
+                                self.__draw_pieces(board)
                                 piece_selected = ()
                                 piece_active = False
                                 possible_moves = []
 
                             elif piece_active is True and grid not in possible_moves:
                                 self.__draw_board()
-                                self.__draw_pieces(base.board)
+                                self.__draw_pieces(board)
                                 piece_selected = ()
                                 piece_active = False
                                 possible_moves = []
@@ -249,20 +279,49 @@ class Game:
                                 piece_active = False
                                 possible_moves = []
                                 self.__draw_board()
-                                self.__draw_pieces(base.board)
+                                self.__draw_pieces(board)
 
                         else:
                             continue
+                elif event.type == pygame.KEYDOWN and menu and box_active:
+
+                    if event.key == pygame.K_BACKSPACE:
+                        game_code = game_code[:-1]
+                    if len(game_code) < 6:
+                        game_code += event.unicode
 
             current_width, current_height = self.get_screen_res()
             current_height = round(current_height * 0.95)
             if menu:
                 self.screen.fill("#202020")
                 self.__draw_button((0, 120, 212))
-                self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (0, 0, 0))
+                self.__draw_text(
+                    "Enter",
+                    30,
+                    (self.window_width / 2 + self.window_width / 8, self.window_height / 2 + self.window_height / 17),
+                    (0, 0, 0),
+                )
+                if box_active:
+                    self.__draw_textbox(True)
+                    self.__draw_text(
+                        game_code,
+                        30,
+                        (
+                            self.window_width / 2 - self.window_height / 13,
+                            self.window_height / 2 + self.window_height / 17,
+                        ),
+                        (0, 0, 0),
+                    )
+                else:
+                    self.__draw_textbox(False)
                 if self.__on_button(mouse_x, mouse_y):
                     self.__draw_button((0, 80, 172))
-                    self.__draw_text("Enter", 30, (self.window_width / 2, self.window_height / 2), (255, 255, 255))
+                    self.__draw_text(
+                        "Enter",
+                        30,
+                        (self.window_width / 2 + self.window_width / 8, self.window_height / 2 + self.window_height / 17),
+                        (255, 255, 255),
+                    )
 
             else:
                 # if grid_check is not None: #Test Code - To be removed
@@ -270,13 +329,13 @@ class Game:
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
                 self.__draw_text(
-                    f"{base.player1.name} vs {base.player2.name}", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
+                    "P1 VS P2", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
                 )
 
                 if self.window_width != current_width or self.window_height != current_height:
                     self.screen.fill("#202020")
                     self.__draw_board()
-                    self.__draw_pieces(base.board)
+                    self.__draw_pieces(board)
 
             clock.tick(self.FPS)
             pygame.display.flip()
