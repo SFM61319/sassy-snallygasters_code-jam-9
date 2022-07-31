@@ -3,7 +3,7 @@
 
 import fastapi
 
-from wild_chess.database import db
+from wild_chess.server.routes.db_setup import db
 
 route = fastapi.APIRouter()
 
@@ -17,7 +17,7 @@ async def signup(username: str, password: str) -> dict:
     :param password:
     :return:
     """
-    player = await db.PlayerDB().create_player(username, password)
+    player = await db.database.create_player(username, password)
     return {"message": "user_created"} if player else {"message": "username already exists"}
 
 
@@ -30,5 +30,5 @@ async def login(username: str, password: str) -> dict:
     :param password:
     :return:
     """
-    player = await db.PlayerDB().check_password(username, password)
+    player = await db.database.check_password(username, password)
     return {"message": "login_successful"} if player else {"message": "login_failed"}

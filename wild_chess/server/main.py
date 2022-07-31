@@ -3,9 +3,7 @@
 import fastapi
 import uvicorn
 
-from wild_chess.server.routes import authentication
-from wild_chess.server.routes import leaderboard
-from wild_chess.server.routes import multiplayer
+from wild_chess.server.routes import authentication, leaderboard, multiplayer
 
 app = fastapi.FastAPI()
 
