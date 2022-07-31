@@ -237,7 +237,7 @@ class Pawn(ChessPiece):
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves
 
-    def check_promotion(self) -> bool:
+    def check_promotion(self) -> bool | Queen:
         """
         Check if the pawn has reached the end of the board.
 
@@ -245,11 +245,11 @@ class Pawn(ChessPiece):
         """
         if self.color == "white":
             if self.position[1] == 7:
-                return True
+                return Queen(self.position, self.player, self.color)
 
         else:
             if self.position[1] == 0:
-                return True
+                return Queen(self.position, self.player, self.color)
 
         return False
 
