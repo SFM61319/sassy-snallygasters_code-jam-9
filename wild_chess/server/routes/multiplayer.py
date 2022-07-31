@@ -22,7 +22,7 @@ async def host_game(username: str) -> dict:
     :param username:
     :return:
     """
-    code: list[str] = [str(i) for i in range(10)]
+    code: list[str] = [str(i) for i in range(6)]
     shuffle(code)
     shuffled: str = "".join(code)
     active_game[username] = {'code': shuffled, 'board': None, 'players': [username]}

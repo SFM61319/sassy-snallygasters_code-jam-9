@@ -3,7 +3,7 @@
 
 import fastapi
 
-from wild_chess.server.routes.db_setup import db
+from .db_setup import db
 
 route = fastapi.APIRouter()
 
