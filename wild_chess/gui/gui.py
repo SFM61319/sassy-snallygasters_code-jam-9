@@ -283,12 +283,11 @@ class Game:
 
                         else:
                             continue
-                elif event.type == pygame.KEYDOWN and menu and box_active and len(game_code) < 6:
+                elif event.type == pygame.KEYDOWN and menu and box_active:
 
                     if event.key == pygame.K_BACKSPACE:
                         game_code = game_code[:-1]
-
-                    else:
+                    if len(game_code) < 6:
                         game_code += event.unicode
 
             current_width, current_height = self.get_screen_res()
