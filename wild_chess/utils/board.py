@@ -78,7 +78,7 @@ class Board:
         colors.remove(player.color)
         player_king = set([j.position for i in board for j in i if isinstance(j, pieces.King) and j.color == player.color][0])
         opponent_pieces = [j for i in board for j in i if j and j.color == colors[0]]
-        moves = set([j.possible_moves(board) for j in opponent_pieces])
+        moves = set([j.possible_moves(board, True) for j in opponent_pieces])
         if player_king & moves:
             return True
         return False

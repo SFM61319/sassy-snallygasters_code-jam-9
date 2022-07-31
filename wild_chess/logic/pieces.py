@@ -13,7 +13,7 @@ class ChessPiece:
     piece_type: str
     PATH: typing.Final[str] = "wild_chess/assets/img/chess_pieces"
     color: str
-    possible_moves: typing.Callable[[typing.Any, list[list[ChessPiece | None]]], list[tuple[int, int]]]
+    possible_moves: typing.Callable[[typing.Any, list[list[ChessPiece | None]], bool], list[tuple[int, int]]]
     image: str
 
     def __init__(self, position: tuple[int, int], player: str, color: str) -> None:
@@ -141,7 +141,7 @@ class ChessPiece:
         return positions
 
     @staticmethod
-    def filter_moves(possibility: list[tuple[int, int]], board: list[list[ChessPiece | None]], player: str) -> list[tuple[int, int]]:
+    def filter_moves(possibility: list[tuple[int, int]], board: list[list[ChessPiece | None]], player: str, check: bool = False) -> list[tuple[int, int]]:
         """
         Filter the moves to only those that are valid.
 
@@ -163,8 +163,10 @@ class ChessPiece:
 
             elif board[move[0]][move[1]].player != player:  # type: ignore
                 moves.append(move)
-
-        return moves
+        checked_moves = [i for i in moves if not isinstance((x := board[i[0]][i[1]]), King) and x and x.player != player] + [i for i in moves if board[i[0]][i[1]] is None] if not check else None
+        if not check:
+            moves = None
+        return moves or checked_moves
 
 
 class Pawn(ChessPiece):
