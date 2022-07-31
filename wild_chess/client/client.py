@@ -3,7 +3,7 @@
 
 import requests
 
-url = "http://127.0.0.1:8000"
+url = "https://sassy-server.herokuapp.com"
 
 
 def host_game(username: str) -> dict:
