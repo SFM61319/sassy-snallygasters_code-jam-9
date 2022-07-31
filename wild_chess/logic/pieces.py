@@ -21,7 +21,9 @@ class ChessPiece:
         self.player = player
         self.color = color
 
-    def move(self, new_position: tuple[int, int], board: list[list[ChessPiece | None]], en_passant: tuple[int, int] = None) -> None:
+    def move(
+        self, new_position: tuple[int, int], board: list[list[ChessPiece | None]], en_passant: tuple[int, int] = None
+    ) -> None:
         """
         Move the piece to a new position.
 
@@ -52,7 +54,7 @@ class ChessPiece:
             point = board[x][y]
             dx = abs(x - self.position[0])
             dy = abs(y - self.position[1])
-            '''
+            """
             nearby_positions = [(x + 1, y + 1), (x + 1, y - 1), (x - 1, y + 1), (x - 1, y - 1)]
             near = [p for p in nearby_positions if 0 <= p[0] < 8 and 0 <= p[1] < 8]
             for p in near:
@@ -61,7 +63,7 @@ class ChessPiece:
                 if p in blacklist and d1x == d1y and d1x > 0:
                     blacklist.append(p)
                     return True
-            '''
+            """
             if (dx == dy) and (dx > 0):
                 positions.append((x, y))
             if point and point.color != self.color and (dx == dy) and (dx > 0):
@@ -109,39 +111,41 @@ class ChessPiece:
         for i in range(self.position[0] + 1, 8):
             # point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
-            '''
+            """
             if point and point.color != self.color:
                 break
-            '''
+            """
 
         for i in range(self.position[0] - 1, -1, -1):
             # point = board[i][self.position[1]]
             positions.append((i, self.position[1]))
-            '''
+            """
             if point and point.color != self.color:
                 break
-            '''
+            """
 
         for i in range(self.position[1] + 1, 8):
             # point = board[self.position[0]][i]
             positions.append((self.position[0], i))
-            '''
+            """
             if point and point.color != self.color:
                 break
-            '''
+            """
 
         for i in range(self.position[1] - 1, -1, -1):
             # point = board[self.position[0]][i]
             positions.append((self.position[0], i))
-            '''
+            """
             if point and point.color != self.color:
                 break
-            '''
+            """
 
         return positions
 
     @staticmethod
-    def filter_moves(possibility: list[tuple[int, int]], board: list[list[ChessPiece | None]], player: str, check: bool = False) -> list[tuple[int, int]]:
+    def filter_moves(
+        possibility: list[tuple[int, int]], board: list[list[ChessPiece | None]], player: str, check: bool = False
+    ) -> list[tuple[int, int]]:
         """
         Filter the moves to only those that are valid.
 
@@ -163,7 +167,12 @@ class ChessPiece:
 
             elif board[move[0]][move[1]].player != player:  # type: ignore
                 moves.append(move)
-        checked_moves = [i for i in moves if not isinstance((x := board[i[0]][i[1]]), King) and x and x.player != player] + [i for i in moves if board[i[0]][i[1]] is None] if not check else None
+        checked_moves = (
+            [i for i in moves if not isinstance((x := board[i[0]][i[1]]), King) and x and x.player != player]
+            + [i for i in moves if board[i[0]][i[1]] is None]
+            if not check
+            else None
+        )
         if not check:
             moves = None
         return moves or checked_moves
@@ -372,7 +381,6 @@ class King(ChessPiece):
 
 
 class WildPiece(ChessPiece):
-
     def __init__(self, piece: ChessPiece, board: list[list[ChessPiece | None]]) -> None:
         super().__init__(piece.position, piece.player, piece.color)
         self.image = piece.image

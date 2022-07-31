@@ -65,8 +65,7 @@ class Board:
             self.board[1][i] = random_piece((1, i), player1.name, player1.color)
             self.board[6][i] = random_piece((6, i), player2.name, player2.color)
 
-    def check_check(
-        self, player: data.PlayerAttributes) -> bool:
+    def check_check(self, player: data.PlayerAttributes) -> bool:
         """
         Check if the player is in check.
 
