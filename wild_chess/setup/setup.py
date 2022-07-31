@@ -37,3 +37,7 @@ class Setup:
 
         self.database = db.PlayerDB()
         await self.database.set_table(self.pool)
+
+    async def close(self) -> None:
+        """Close all connections"""
+        await self.pool.close()

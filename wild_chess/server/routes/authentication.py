@@ -3,8 +3,7 @@
 
 import fastapi
 
-from .db_setup import db
-
+from ...setup.setup import Setup
 route = fastapi.APIRouter()
 
 
@@ -17,7 +16,10 @@ async def signup(username: str, password: str) -> dict:
     :param password:
     :return:
     """
-    player = await db.database.create_player(username, password)
+    setup = Setup()
+    await setup.setup()
+    player = await setup.database.create_player(username, password)
+    await setup.close()
     return {"message": "user_created"} if player else {"message": "username already exists"}
 
 
@@ -30,5 +32,8 @@ async def login(username: str, password: str) -> dict:
     :param password:
     :return:
     """
-    player = await db.database.check_password(username, password)
+    setup = Setup()
+    await setup.setup()
+    player = await setup.database.check_password(username, password)
+    await setup.close()
     return {"message": "login_successful"} if player else {"message": "login_failed"}
