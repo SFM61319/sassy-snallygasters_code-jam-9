@@ -8,7 +8,6 @@ import pygame
 
 from wild_chess.logic import pieces
 from wild_chess.server.routes.multiplayer import active_game
-# import board_backend
 
 
 class Game:
@@ -234,8 +233,10 @@ class Game:
         if not menu:
             self.__draw_board()
             self.__draw_pieces(base.board)
-        text_board = lambda x: [(j.piece_type, j.color) if j else ' ' for i in x for j in i]
-        active_game[(base.player1.name, base.player2.name)] = [text_board(base.board)[i:i+8] for i in range(0, len(text_board(base.board)), 8)]
+        text_board = lambda x: [(j.piece_type, j.color) if j else " " for i in x for j in i]
+        active_game[(base.player1.name, base.player2.name)] = [
+            text_board(base.board)[i : i + 8] for i in range(0, len(text_board(base.board)), 8)
+        ]
         current_player = base.current_player
         running = True
         piece_active = False  # Piece is selected
@@ -267,7 +268,9 @@ class Game:
                             grid_x, grid_y = grid[0], grid[1]
                             current_piece = base.board[grid_y][grid_x]
                             if piece_active is False and current_piece is not None:
-                                player_pieces = [j for i in base.board for j in i if j and j.color == base.current_player.color]
+                                player_pieces = [
+                                    j for i in base.board for j in i if j and j.color == base.current_player.color
+                                ]
                                 if current_piece in player_pieces:
                                     piece_selected = grid
                                     possible_moves = base.board[grid_y][grid_x].possible_moves(base.board)  # type: ignore
@@ -281,9 +284,13 @@ class Game:
                                 self.__draw_board()
                                 self.__draw_pieces(base.board)
                                 self.__gameflow(base, piece_selected, grid[::-1])
-                                base.turns[base.total_turns] = {current_player.name: (piece_selected[::-1], grid[::-1], current_player.color)}
+                                base.turns[base.total_turns] = {
+                                    current_player.name: (piece_selected[::-1], grid[::-1], current_player.color)
+                                }
                                 base.total_turns += 1
-                                active_game[(base.player1.name, base.player2.name)] = [text_board(base.board)[i:i+8] for i in range(0, len(text_board(base.board)), 8)]
+                                active_game[(base.player1.name, base.player2.name)] = [
+                                    text_board(base.board)[i : i + 8] for i in range(0, len(text_board(base.board)), 8)
+                                ]
                                 piece_selected = ()
                                 piece_active = False
                                 possible_moves = []
@@ -350,7 +357,10 @@ class Game:
 
                 # TODO: Use player usernames instead # pylint: disable=W0511
                 self.__draw_text(
-                    f"⚪{base.player1.name} vs {base.player2.name}⚫", 30, (self.window_width // 2, (self.board_dfe * 2) + self.board_height), (255, 255, 255)
+                    f"⚪{base.player1.name} vs {base.player2.name}⚫",
+                    30,
+                    (self.window_width // 2, (self.board_dfe * 2) + self.board_height),
+                    (255, 255, 255),
                 )
 
                 if self.window_width != current_width or self.window_height != current_height:
