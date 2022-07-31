@@ -96,7 +96,7 @@ class ChessPiece:
 
         return positions
 
-    def find_sides(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
+    def find_sides(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:  # pylint: disable=unused-argument
         """
         Finds sides.
 
@@ -183,51 +183,56 @@ class Pawn(ChessPiece):
     def possible_moves(self, board: list[list[ChessPiece]]) -> list[tuple[int, int]]:
         """Get the possible moves for the pawn."""
         self.possibility = []
+        a = (self.position[0], self.position[1])
+
         if self.color == "white":
-            if self.position[0] == 1:
-                self.possibility.append((self.position[0] + 2, self.position[1]))
 
-            self.possibility.append((self.position[0] + 1, self.position[1]))
+            if a[0] == 1:
+                self.possibility.append((a[0] + 2, a[1]))
 
-            x = (self.position[0] + 1, self.position[1] + 1)
+            if board[a[0] + 1][a[1]] is None:
+                self.possibility.append((a[0] + 1, a[1]))
+
+            x = (a[0] + 1, a[1] + 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
                 self.possibility.append(x)
 
-            x = (self.position[0] + 1, self.position[1] - 1)
+            x = (a[0] + 1, a[1] - 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
                 self.possibility.append(x)
 
             self.possibility.append(x)
 
-            y = board[self.position[0]][self.position[1] - 1]
+            y = board[a[0]][a[1] - 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] + 1, self.position[1] - 1))
+                self.possibility.append((a[0] + 1, a[1] - 1))
 
-            y = board[self.position[0]][self.position[1] + 1]
+            y = board[a[0]][a[1] + 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] + 1, self.position[1] + 1))
+                self.possibility.append((a[0] + 1, a[1] + 1))
 
         else:
-            if self.position[0] == 6:
-                self.possibility.append((self.position[0] - 2, self.position[1]))
+            if a[0] == 6:
+                self.possibility.append((a[0] - 2, a[1]))
 
-            self.possibility.append((self.position[0] - 1, self.position[1]))
+            if board[a[0] - 1][a[1]] is None:
+                self.possibility.append((a[0] - 1, a[1]))
 
-            x = (self.position[0] - 1, self.position[1] - 1)
+            x = (a[0] - 1, a[1] - 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
                 self.possibility.append(x)
 
-            x = (self.position[0] - 1, self.position[1] + 1)
+            x = (a[0] - 1, a[1] + 1)
             if x and board[x[0]][x[1]] is not None and board[x[0]][x[1]].player != self.player:
                 self.possibility.append(x)
 
-            y = board[self.position[0]][self.position[1] - 1]
+            y = board[a[0]][a[1] - 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] - 1, self.position[1] - 1))
+                self.possibility.append((a[0] - 1, a[1] - 1))
 
-            y = board[self.position[0]][self.position[1] + 1]
+            y = board[a[0]][a[1] + 1]
             if y is not None and y.color != self.color:
-                self.possibility.append((self.position[0] - 1, self.position[1] + 1))
+                self.possibility.append((a[0] - 1, a[1] + 1))
 
         self.moves = self.filter_moves(self.possibility, board, self.player)
         return self.moves

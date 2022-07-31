@@ -6,7 +6,6 @@ import typing
 
 from wild_chess.logic import pieces
 from wild_chess.utils import data
-from wild_chess.gui import gui
 
 
 # Create a class board and subclass it to have two teams
@@ -39,7 +38,7 @@ class Board:
         :param player2:
         :return:
         """
-        all_special_pieces: list[type[pieces.ChessPiece]] = [
+        all_special_pieces: list[typing.Callable[[tuple[int, int], str, str], pieces.ChessPiece]] = [
             pieces.Rook,
             pieces.Knight,
             pieces.Bishop,
@@ -75,7 +74,7 @@ class Board:
         colors.remove(player.color)
         player_king = set([j.position for i in board for j in i if isinstance(j, pieces.King) and j.color == player.color][0])
         opponent_pieces = [j for i in board for j in i if j and j.color == colors[0]]
-        moves = set([j.possible_moves() for j in opponent_pieces])
+        moves = set([j.possible_moves(board) for j in opponent_pieces])
         if player_king & moves:
             return True
         return False
@@ -91,18 +90,25 @@ class Board:
             dummy_board = self.board.copy()
             player_pieces = [j for i in self.board for j in i if j and j.color == player.color]
             for i in player_pieces:
-                for j in i.possible_moves():
+                for j in i.possible_moves(dummy_board):
+                    piece = None
+                    en_passant = self.check_en_passant(player, i.position, j, dummy_board)
                     dummy_board[j[0]][j[1]] = i
                     dummy_board[i.position[0]][i.position[1]] = None
+                    if en_passant:
+                        piece = dummy_board[en_passant[0]][en_passant[1]]
+                        dummy_board[en_passant[0]][en_passant[1]] = None
                     if not self.check_check(player, dummy_board):
                         return False
                     dummy_board[i.position[0]][i.position[1]] = i
                     dummy_board[j[0]][j[1]] = None
+                    if en_passant:
+                        dummy_board[en_passant[0]][en_passant[1]] = piece
             return True
         return False
 
     def check_en_passant(
-        self, player: data.PlayerAttributes, old: typing.Tuple[int, int], new: typing.Tuple[int, int]
+        self, player: data.PlayerAttributes, old: typing.Tuple[int, int], new: typing.Tuple[int, int], board: typing.List[typing.List[typing.Optional[pieces.ChessPiece]]] = None
     ) -> tuple[int, int] | None:
         """
         Check if the player is in el passant.
@@ -110,18 +116,21 @@ class Board:
         :param player:
         :param old:
         :param new:
+        :param board:
         :return:
         """
+        if not board:
+            board = self.board
         if not isinstance(self.board[old[0]][old[1]], pieces.Pawn):
             return None
-        if (x := self.board[old[0]][old[1] - 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+        if (x := board[old[0]][old[1] - 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
                 if (old[0] + 1, old[1] - 1) == new:
                     return old[0], old[1] - 1
             else:
                 if (old[0] - 1, old[1] - 1) == new:
                     return old[0], old[1] - 1
-        if (x := self.board[old[0]][old[1] + 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
+        if (x := board[old[0]][old[1] + 1]) is not None and isinstance(x, pieces.Pawn) and x.color != player.color:
             if player.color == "white":
                 if (old[0] + 1, old[1] + 1) == new:
                     return old[0], old[1] + 1
@@ -129,35 +138,6 @@ class Board:
                 if (old[0] - 1, old[1] + 1) == new:
                     return old[0], old[1] + 1
         return None
-
-    def check_king_mouse_slip(
-        self,
-        player: data.PlayerAttributes,
-        old: typing.Tuple[int, int],
-    ) -> bool:
-        """The king can take his own pieces"""
-        x = self.board[old[0] + 1][old[1]]
-        if isinstance(x, pieces.Pawn) and x.color == player.color:
-            return True
-        return False
-
-    def check_knight_mouse_slip(self, player: data.PlayerAttributes, old: typing.Tuple[int, int]) -> bool:
-        """The knight moves straight up when pawn, instead of how it originally moves"""
-        x = self.board[old[0] + 1][old[1] + 1]
-        if isinstance(x, pieces.Pawn) and x.color != player.color:
-            return True
-        return False
-
-    def check_queen_mouse_slip(self, player: data.PlayerAttributes, old: typing.Tuple[int, int]) -> bool:
-        """The queen moves like a knight"""
-        x = self.board[old[0] - 1][old[1] + 1]
-        y = self.board[old[0] + 1][old[1] - 1]
-
-        if (isinstance(x, pieces.Pawn) and x.color != player.color) or (
-            isinstance(y, pieces.Pawn) and y.color != player.color
-        ):
-            return True
-        return False
 
     def start(self) -> None:
         self.generate_pieces(self.player1, self.player2)
@@ -167,7 +147,8 @@ class Board:
             self.current_player = self.player1 if self.current_player == self.player2 else self.player2
             print(f"{self.current_player.name}'s turn")
             # old, new = self.get_move() ask move return old pos and new pos
-            old, new = self.get_move()
+            old = (0, 0)
+            new = (0, 0)
             en_passant = self.check_en_passant(self.current_player, old, new)
             if en_passant:
                 print("En passant")

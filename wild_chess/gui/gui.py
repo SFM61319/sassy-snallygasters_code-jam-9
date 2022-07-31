@@ -84,7 +84,7 @@ class Game:
                     ),
                 )
 
-    def __draw_pieces(self, board: list[list[pieces.ChessPiece]]) -> None:
+    def __draw_pieces(self, board: list[list[pieces.ChessPiece | None]]) -> None:
         for row in range(self.SQUARES):
             for column in range(self.SQUARES):
                 if board[row][column] is not None:
@@ -100,7 +100,7 @@ class Game:
                         ),
                     )
 
-    def __move_piece(self, initial: tuple, final: tuple, board: list[list[pieces.ChessPiece]]) -> None:
+    def __move_piece(self, initial: tuple, final: tuple, board: list[list[pieces.ChessPiece | None]]) -> None:
         """Move piece to new position"""
         board[initial[0]][initial[1]].move(final, board)
 
@@ -113,7 +113,7 @@ class Game:
 
         self.screen.blit(render_text, text_rect)
 
-    def __update(self, possibles: list[tuple[int, int]], board: list[list[pieces.ChessPiece]]) -> None:
+    def __update(self, possibles: list[tuple[int, int]], board: list[list[pieces.ChessPiece | None]]) -> None:
         """Update screen."""
         self.__draw_board()
         self.__moves_highlight(possibles, board)
@@ -146,7 +146,7 @@ class Game:
             return None
         return None
 
-    def __moves_highlight(self, possibles: list[tuple[int, int]], board: list[list[pieces.ChessPiece]]) -> None:
+    def __moves_highlight(self, possibles: list[tuple[int, int]], board: list[list[pieces.ChessPiece | None]]) -> None:
         """Function to highlight the possible squares"""
         move_colors = ["#67f757", "#f75757"]  # Green, Red
         current_color = move_colors[0]
@@ -176,7 +176,7 @@ class Game:
             return True
         return False
 
-    def init(self, board: list[list[pieces.ChessPiece]]) -> None:  # noqa: C901
+    def init(self, board: list[list[pieces.ChessPiece | None]]) -> None:  # noqa: C901
         """Starts the GUI."""
         pygame.display.init()
         pygame.display.set_caption("Wild Chess")
@@ -192,8 +192,8 @@ class Game:
 
         running = True
         piece_active = False  # Piece is selected
-        piece_selected = ()  # Current position of selected piece
-        possible_moves = ()  # Possible moves for the selected piece
+        piece_selected: tuple[int, int] = ()  # Current position of selected piece
+        possible_moves: list[tuple[int, int]] = []  # Possible moves for the selected piece
         while running:
             mouse_x, mouse_y = pygame.mouse.get_pos()
 

@@ -13,9 +13,9 @@ async def host_game(username: str) -> dict:
     :param username:
     :return:
     """
-    code = [str(i) for i in range(10)]
+    code: list[str] = [str(i) for i in range(10)]
     shuffle(code)
-    code = "".join(code)
+    code: str = "".join(code)
     active_game[username] = {'code': code, 'board': None, 'players': [username]}
     return {'code': code}
 
@@ -27,10 +27,10 @@ async def join_game(code: str, username: str) -> dict:
     :param username:
     :return:
     """
-    for i in active_game:
-        if active_game[i]['code'] == code:
-            if len(active_game[i]['players']) == 1 and username not in active_game[i]['players']:
-                active_game[i]['players'].append(username)
+    for k, v in active_game.items():
+        if v['code'] == code:
+            if len(v['players']) == 1 and username not in v['players']:
+                v['players'].append(username)
                 return {'message': 'ok'}
 
     return {'message': 'error'}
