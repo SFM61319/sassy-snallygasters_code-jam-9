@@ -1,4 +1,7 @@
-# Wild Chess, for the Amazonian within all of us
+# Wild Chess
+<p align="center">
+    <img src="https://github.com/SFM61319/sassy-snallygasters_code-jam-9/blob/main/assets/img/banner/banner.png" width="512"/>
+</p>
 
 *Python Code Jam 9 submission by* Sassy Snallygasters.
 
